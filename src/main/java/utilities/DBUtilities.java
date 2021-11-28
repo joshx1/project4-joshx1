@@ -1,4 +1,4 @@
-package ConnectionPool;
+package utilities;
 
 import utilities.ClientInfo;
 
@@ -88,6 +88,20 @@ public class DBUtilities {
         return clientInfo;
     }
 
+
+    public static void executeInsertEvent(Connection con, String email, String name, String location, Date date, float price, float priceStudent, float priceVIP) throws SQLException {
+        System.out.println(date);
+        String insertEventSql = "INSERT INTO EventsData (creator, name, location, date, price, price_student, price_VIP) VALUES (?, ?, ?, ?, ?, ?, ?);";
+        PreparedStatement insertClientLocationStmt = con.prepareStatement(insertEventSql);
+        insertClientLocationStmt.setString(1, email);
+        insertClientLocationStmt.setString(2, name);
+        insertClientLocationStmt.setString(3, location);
+        insertClientLocationStmt.setFloat(4, price);
+        insertClientLocationStmt.setFloat(5, priceStudent);
+        insertClientLocationStmt.setFloat(6, priceVIP);
+        insertClientLocationStmt.setDate(7, date);
+        insertClientLocationStmt.executeUpdate();
+    }
     /**
      * Get details for all events.
      * @param con
@@ -98,6 +112,7 @@ public class DBUtilities {
         PreparedStatement selectAllContactsStmt = con.prepareStatement(selectAllContactsSql);
         ResultSet results = selectAllContactsStmt.executeQuery();
         return results;
+
         //ArrayList<HashMap> eventDetails = new ArrayList<HashMap>();
         //while(results.next()) {
         //    HashMap<String, String> nameMap = new HashMap<String, String>();
@@ -109,12 +124,42 @@ public class DBUtilities {
         //    System.out.printf("Email: %s\n", results.getString("email"));
         //    System.out.printf("Start Date: %s\n", results.getString("startdate"));
         }
+    /**
+     * Get details for a specific event.
+     * @param con
+     * @throws SQLException
+     */
+    public static EventInfo executeSelectSpecificEvent(Connection con, int id) throws SQLException {
+        String selectSql = "SELECT * FROM EventsData WHERE id = ?;";
+        PreparedStatement selectClientInfoStmt = con.prepareStatement(selectSql);
+        selectClientInfoStmt.setInt(1, id);
+        ResultSet results = selectClientInfoStmt.executeQuery();
+        results.next();
+        EventInfo eventInfo = new EventInfo(
+            results.getInt("id"),
+            results.getString("creator"),
+            results.getString("name"),
+            results.getString("location"),
+            results.getFloat("price"),
+            results.getFloat("price_VIP"),
+            results.getFloat("price_student"),
+            results.getDate("date"));
+        return eventInfo;
+    }
 
-        /**
-         * A method to demonstrate using a PrepareStatement to execute a database select
-         * @param con
-         * @throws SQLException
-         */
+    public static void buyTicket(Connection con, String email, String eventId) throws SQLException {
+        String insertContactSql = "INSERT INTO EventAndGuests (event_id, email) VALUES (?, ?);";
+        PreparedStatement insertContactStmt = con.prepareStatement(insertContactSql);
+        insertContactStmt.setString(1, eventId);
+        insertContactStmt.setString(2, email);
+        insertContactStmt.executeUpdate();
+    }
+
+    /**
+     * A method to demonstrate using a PrepareStatement to execute a database select
+     * @param con
+     * @throws SQLException
+     */
     public static void executeSelectAndPrint(Connection con) throws SQLException {
         String selectAllContactsSql = "SELECT * FROM contacts;";
         PreparedStatement selectAllContactsStmt = con.prepareStatement(selectAllContactsSql);

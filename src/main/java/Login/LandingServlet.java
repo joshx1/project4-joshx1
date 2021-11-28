@@ -1,4 +1,4 @@
-package Landing;
+package Login;
 
 import ServerFramework.TicketServerConstants;
 import jakarta.servlet.ServletException;

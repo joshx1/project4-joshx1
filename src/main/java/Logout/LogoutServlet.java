@@ -1,5 +1,6 @@
-package ServerFramework;
+package Logout;
 
+import ServerFramework.TicketServerConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

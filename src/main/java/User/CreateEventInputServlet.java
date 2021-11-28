@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import utilities.DBUtilities;
 import ConnectionPool.DBCPDataSource;
 
-public class CreateEventServlet extends HttpServlet {
+public class CreateEventInputServlet extends HttpServlet {
 
     private ClientInfo clientInfo;
 
@@ -29,10 +29,18 @@ public class CreateEventServlet extends HttpServlet {
             clientInfo = DBUtilities.userInfoFromEmail(connection, email);
             resp.getWriter().println("<h1> Create Event </h1>");
             resp.getWriter().println("<form target=\"_blank\" action=\"/api/event/"+ clientInfo.getEmail() + "\" method=\"post\">\n" +
-                "  <label for=\"msg\">New location:</label><br/>\n" +
+                "  <label for=\"msg\">Event name:</label><br/>\n" +
+                "  <input type=\"text\" id=\"name\" name=\"name\"/><br/>\n" +
+                "  <label for=\"msg\">Event date (YYYY-MM-DD):</label><br/>\n" +
+                "  <input type=\"text\" id=\"date\" name=\"date\"/><br/>\n" +
+                "  <label for=\"msg\">Location:</label><br/>\n" +
                 "  <input type=\"text\" id=\"location\" name=\"location\"/><br/>\n" +
-                "  <label for=\"msg\">New location:</label><br/>\n" +
-                "  <input type=\"text\" id=\"blah\" name=\"blah\"/><br/>\n" +
+                "  <label for=\"msg\">Price:</label><br/>\n" +
+                "  <input type=\"text\" id=\"price\" name=\"price\"/><br/>\n" +
+                "  <label for=\"msg\">Student price:</label><br/>\n" +
+                "  <input type=\"text\" id=\"priceStudent\" name=\"priceStudent\"/><br/>\n" +
+                "  <label for=\"msg\">VIP price:</label><br/>\n" +
+                "  <input type=\"text\" id=\"priceVIP\" name=\"priceVIP\"/><br/>\n" +
                 "  <input type=\"submit\" value=\"Submit\"/>\n" +
                 "</form>");
 

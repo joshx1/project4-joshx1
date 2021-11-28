@@ -1,5 +1,6 @@
-package ServerFramework;
+package Login;
 
+import ServerFramework.TicketServerConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,10 @@ import utilities.ClientInfo;
 import utilities.Config;
 import utilities.HTTPFetcher;
 import utilities.LoginUtilities;
+import java.sql.Connection;
+import java.sql.SQLException;
+import ConnectionPool.DBCPDataSource;
+import utilities.DBUtilities;
 
 import java.io.IOException;
 import java.util.Map;
@@ -21,8 +26,6 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("asdf");
-
         // retrieve the ID of this session
         String sessionId = req.getSession(true).getId();
 
@@ -47,7 +50,6 @@ public class LoginServlet extends HttpServlet {
         // they'll be redirected back to your service along with the typical code that signifies
         // a temporary access code. Exchange that code for a real access token using the
         // /openid.connect.token method.
-        System.out.println(code);
         String url = LoginUtilities.generateSlackTokenURL(config.getClient_id(), config.getClient_secret(), code, config.getRedirect_url());
 
         // Make the request to the token API
@@ -55,7 +57,6 @@ public class LoginServlet extends HttpServlet {
         Map<String, Object> response = LoginUtilities.jsonStrToMap(responseString);
 
         ClientInfo clientInfo = LoginUtilities.verifyTokenResponse(response, sessionId);
-
         if(clientInfo == null) {
             resp.setStatus(HttpStatus.OK_200);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
@@ -67,9 +68,19 @@ public class LoginServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1>Hello, " + clientInfo.getName() + "</h1>");
             resp.getWriter().println("<p><a href=\"/logout\">Signout</a>");
-            resp.getWriter().println("<p><a href=\"/userinfo\">Signout</a>");
+            resp.getWriter().println("<p><a href=\"/userinfo\">User Info</a>");
+            resp.getWriter().println("<p><a href=\"/events\">Event List</a>");
+            resp.getWriter().println("<p><a href=\"/createevent\">Create Event</a>");
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
-
+            try {
+                Connection connection = DBCPDataSource.getConnection();
+                DBUtilities.executeInsertSessionData(connection, sessionId, clientInfo.getEmail());
+                if (!(DBUtilities.checkClientExists(connection, clientInfo.getEmail()) == 1)) {
+                    DBUtilities.executeInsertClientData(connection, clientInfo.getName(), clientInfo.getAccess_token(), clientInfo.getToken_type(), clientInfo.getId_token(), clientInfo.getEmail(), clientInfo.isEmail_verified());
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

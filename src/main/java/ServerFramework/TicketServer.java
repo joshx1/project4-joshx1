@@ -1,20 +1,21 @@
 package ServerFramework;
 
+import APIs.CreatEventServlet;
+import APIs.PurchaseTicketServlet;
+import Events.DisplayEventInfoServlet;
+import Login.LandingServlet;
+import Login.LoginServlet;
+import Logout.LogoutServlet;
+import Events.DisplayAllEventsServlet;
+import User.CreateEventInputServlet;
+import User.UserInfoServlet;
+import APIs.UpdateUserInformationServlet;
 import com.google.gson.Gson;
-import com.sun.net.httpserver.HttpContext;
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.Source;
 import utilities.Config;
 
-import javax.xml.crypto.Data;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.*;
 
 /**
  * A server to use Jetty to implement login with Slack functionality.
@@ -28,7 +29,7 @@ import java.util.*;
  * testing your program locally. DO NOT USE LOCALHOST!
  *
  */
-public class LoginServer {
+public class TicketServer {
 
     public static final int PORT = 8080;
     private static final String configFilename = "config.json";
@@ -58,18 +59,27 @@ public class LoginServer {
         // make the config information available across servlets by setting an
         // attribute in the context
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setAttribute(LoginServerConstants.CONFIG_KEY, config);
+        context.setAttribute(TicketServerConstants.CONFIG_KEY, config);
 
         // the default path will direct to a landing page with
         // "Login with Slack" button
-        context.addServlet(LandingServlet.class, "/");
 
         // Once authenticated, Slack will redirect the user
         // back to /login
+        context.addServlet(LandingServlet.class, "/");
         context.addServlet(LoginServlet.class, "/login");
-
-        // handle logout
+        context.addServlet(UserInfoServlet.class, "/userinfo");
+        context.addServlet(DisplayAllEventsServlet.class, "/events");
+        context.addServlet(DisplayEventInfoServlet.class, "/event/*");
+        context.addServlet(CreateEventInputServlet.class, "/createevent");
         context.addServlet(LogoutServlet.class, "/logout");
+
+
+        // apis
+        context.addServlet(UpdateUserInformationServlet.class, "/api/userinformation/*");
+        context.addServlet(CreatEventServlet.class, "/api/event/*");
+        context.addServlet(PurchaseTicketServlet.class, "/api/buy/*");
+        // handle logout
 
         // start it up!
         server.setHandler(context);

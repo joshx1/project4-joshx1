@@ -1,7 +1,7 @@
-package User;
+package Events;
 
 import ConnectionPool.DBCPDataSource;
-import ConnectionPool.DBUtilities;
+import utilities.DBUtilities;
 import ServerFramework.TicketServerConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
