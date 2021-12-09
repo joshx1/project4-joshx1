@@ -6,16 +6,18 @@ public class EventInfo {
     private String creator;
     private String name;
     private String location;
+    private int capacity;
     private float price;
     private float priceVIP;
     private float priceStudent;
     private Date date;
 
-    public EventInfo(int id, String creator, String name, String location, float price, float priceVIP, float priceStudent, Date date) {
+    public EventInfo(int id, String creator, String name, String location, int capacity, float price, float priceVIP, float priceStudent, Date date) {
         this.id = id;
         this.creator = creator;
         this.name = name;
         this.location = location;
+        this.capacity = capacity;
         this.price = price;
         this.priceVIP = priceVIP;
         this.priceStudent = priceStudent;
@@ -52,6 +54,14 @@ public class EventInfo {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     public float getPrice() {

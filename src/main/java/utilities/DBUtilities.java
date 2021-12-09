@@ -88,20 +88,21 @@ public class DBUtilities {
         return clientInfo;
     }
 
-
-    public static void executeInsertEvent(Connection con, String email, String name, String location, Date date, float price, float priceStudent, float priceVIP) throws SQLException {
-        System.out.println(date);
-        String insertEventSql = "INSERT INTO EventsData (creator, name, location, date, price, price_student, price_VIP) VALUES (?, ?, ?, ?, ?, ?, ?);";
+    public static void executeInsertEvent(Connection con, String email, String name, String location, Date date, int capacity, float price, float priceStudent, float priceVIP, byte[] image) throws SQLException {
+        String insertEventSql = "INSERT INTO EventsData (creator, name, date, location, capacity, price, price_student, price_VIP, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement insertClientLocationStmt = con.prepareStatement(insertEventSql);
         insertClientLocationStmt.setString(1, email);
         insertClientLocationStmt.setString(2, name);
-        insertClientLocationStmt.setString(3, location);
-        insertClientLocationStmt.setFloat(4, price);
-        insertClientLocationStmt.setFloat(5, priceStudent);
-        insertClientLocationStmt.setFloat(6, priceVIP);
-        insertClientLocationStmt.setDate(7, date);
+        insertClientLocationStmt.setDate(3, date);
+        insertClientLocationStmt.setString(4, location);
+        insertClientLocationStmt.setInt(5, capacity);
+        insertClientLocationStmt.setDouble(6, price);
+        insertClientLocationStmt.setDouble(7, priceStudent);
+        insertClientLocationStmt.setDouble(8, priceVIP);
+        insertClientLocationStmt.setBytes(9, image);
         insertClientLocationStmt.executeUpdate();
     }
+
     /**
      * Get details for all events.
      * @param con
@@ -124,6 +125,22 @@ public class DBUtilities {
         //    System.out.printf("Email: %s\n", results.getString("email"));
         //    System.out.printf("Start Date: %s\n", results.getString("startdate"));
         }
+
+    /**
+     * Get for events by name, partial matches are returned.
+     * @param con
+     * @throws SQLException
+     */
+    public static ResultSet searchEvents(Connection con, String query) throws SQLException {
+        System.out.println("DB");
+        System.out.println(query);
+        String searchSql = "SELECT * FROM EventsData WHERE name LIKE ?;";
+        PreparedStatement searchStmt = con.prepareStatement(searchSql);
+        searchStmt.setString(1,'%' + query + '%');
+        ResultSet results = searchStmt.executeQuery();
+        return results;
+    }
+
     /**
      * Get details for a specific event.
      * @param con
@@ -140,13 +157,22 @@ public class DBUtilities {
             results.getString("creator"),
             results.getString("name"),
             results.getString("location"),
+            results.getInt("capacity"),
             results.getFloat("price"),
             results.getFloat("price_VIP"),
-            results.getFloat("price_student"),
-            results.getDate("date"));
+            results.getFloat("price_Student"),
+            results.getDate("date")
+            );
         return eventInfo;
     }
 
+    /**
+     * Buys ticket from SQL database.
+     * @param con
+     * @param email
+     * @param eventId
+     * @throws SQLException
+     */
     public static void buyTicket(Connection con, String email, String eventId) throws SQLException {
         String insertContactSql = "INSERT INTO EventAndGuests (event_id, email) VALUES (?, ?);";
         PreparedStatement insertContactStmt = con.prepareStatement(insertContactSql);

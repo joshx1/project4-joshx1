@@ -31,11 +31,14 @@ public class CreatEventServlet extends HttpServlet {
             String name = null;
             String location = null;
             Date date = null;
+            int capacity = 0;
             float price = 0;
             // Issue how to initialize as null?
             float priceStudent = 0;
             float priceVIP = 0;
+            byte[] image = null;
             bodies = body.split("&");
+            System.out.println(bodies);
             for (int i = 0; i < bodies.length; i++) {
                 bodyParts = bodies[i].split("=");
                 System.out.println(bodyParts[0]);
@@ -49,6 +52,9 @@ public class CreatEventServlet extends HttpServlet {
                     System.out.println(bodyParts[0]);
                     System.out.println(bodyParts[1]);
                     date = Date.valueOf(bodyParts[1]);
+                } else if (bodyParts[0].startsWith("capacity") && bodyParts.length == 2) {
+                    System.out.println(bodyParts[0]);
+                    capacity = Integer.parseInt(bodyParts[1]);
                 } else if (bodyParts[0].startsWith("price") && bodyParts.length == 2) {
                     System.out.println(bodyParts[0]);
                     price = Float.parseFloat(bodyParts[1]);
@@ -58,11 +64,13 @@ public class CreatEventServlet extends HttpServlet {
                 } else if (bodyParts[0].startsWith("priceVIP") && bodyParts.length == 2) {
                     System.out.println(bodyParts[0]);
                     priceVIP = Float.parseFloat(bodyParts[1]);
+                } else if (bodyParts[0].startsWith("image") && bodyParts.length == 2) {
+                    System.out.println(bodyParts[0]);
+                    image = bodyParts[1].getBytes(StandardCharsets.UTF_8);
                 }
             }
-
             Connection connection = DBCPDataSource.getConnection();
-            DBUtilities.executeInsertEvent(connection, URI[3], name, location, date, price, priceStudent, priceVIP);
+            DBUtilities.executeInsertEvent(connection, URI[3], name, location, date, capacity, price, priceStudent, priceVIP, image);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

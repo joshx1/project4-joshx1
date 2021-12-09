@@ -1,5 +1,6 @@
 package APIs;
 import ConnectionPool.DBCPDataSource;
+import org.eclipse.jetty.http.HttpStatus;
 import utilities.DBUtilities;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -15,8 +16,11 @@ import java.sql.SQLException;
 public class UpdateUserInformationServlet extends HttpServlet{
     String[] bodyParts;
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.setStatus(HttpStatus.OK_200);
         String [] URI = req.getRequestURI().split("/");
         // Process the request body.
+        System.out.println("YEET");
         try(BufferedReader reader = req.getReader()) {
             String body = URLDecoder.decode(reader.readLine(), StandardCharsets.UTF_8.toString());
             //TODO: verify the body exists and it contains a =
@@ -32,6 +36,11 @@ public class UpdateUserInformationServlet extends HttpServlet{
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            System.out.println("Databases yes");
+            resp.getWriter().println("<h1> Success </h1>");
+            resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
+                "<button name=\"returnhome\" value=" + ">Return to home</button>" +
+                "</form>");
         }
     }
 }

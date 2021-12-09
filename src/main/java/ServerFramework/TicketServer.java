@@ -8,6 +8,7 @@ import Login.LoginServlet;
 import Logout.LogoutServlet;
 import Events.DisplayAllEventsServlet;
 import User.CreateEventInputServlet;
+import User.SearchServlet;
 import User.UserInfoServlet;
 import APIs.UpdateUserInformationServlet;
 import com.google.gson.Gson;
@@ -72,8 +73,8 @@ public class TicketServer {
         context.addServlet(DisplayAllEventsServlet.class, "/events");
         context.addServlet(DisplayEventInfoServlet.class, "/event/*");
         context.addServlet(CreateEventInputServlet.class, "/createevent");
+        context.addServlet(SearchServlet.class, "/search");
         context.addServlet(LogoutServlet.class, "/logout");
-
 
         // apis
         context.addServlet(UpdateUserInformationServlet.class, "/api/userinformation/*");

@@ -36,15 +36,25 @@ public class DisplayEventInfoServlet extends HttpServlet {
             resp.getWriter().println("<h1> User information </h1>");
             resp.getWriter().println("<h1>Name: " + eventInfo.getName() + "</h1>");
             resp.getWriter().println("<h1>Location: " + eventInfo.getLocation() + "</h1>");
+            resp.getWriter().println("<h1>Capacity: " + eventInfo.getCapacity() + "</h1>");
             resp.getWriter().println("<h1>Price: " + eventInfo.getPrice() + "</h1>");
             resp.getWriter().println("<h1>Student Price: " + eventInfo.getPriceStudent() + "</h1>");
             resp.getWriter().println("<h1>VIP Price: " + eventInfo.getPriceVIP() + "</h1>");
             resp.getWriter().println("<form action=\"/api/buy/" + clientInfo.getEmail() + "\" method=\"post\">" +
             "<button name=\"eventid\" value=" + eventInfo.getId() + ">Buy ticket</button>" +
             "</form>");
+
+            resp.getWriter().println("<form action=\"/api/buy/" + clientInfo.getEmail() + "\" method=\"post\">" +
+                "<button name=\"eventid\" value=" + eventInfo.getId() + ">Buy ticket</button>" +
+                "</form>");
+
+            resp.getWriter().println("<form action=\"/api/buy/" + clientInfo.getEmail() + "\" method=\"post\">" +
+                "<button name=\"eventid\" value=" + eventInfo.getId() + ">Buy ticket</button>" +
+                "</form>");
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
+
 }

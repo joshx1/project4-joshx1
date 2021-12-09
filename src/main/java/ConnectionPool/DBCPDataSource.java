@@ -41,6 +41,7 @@ public class DBCPDataSource {
         ds.setPassword(config.getPassword());
         ds.setMinIdle(5);
         ds.setMaxIdle(10);
+        ds.setMaxTotal(100);
     }
 
     /**

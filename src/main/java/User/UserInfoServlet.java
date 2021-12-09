@@ -36,7 +36,7 @@ public class UserInfoServlet extends HttpServlet {
             resp.getWriter().println("<h1>Name: " + clientInfo.getName() + "</h1>");
             resp.getWriter().println("<h1>Location: " + clientInfo.getLocation() + "</h1>");
             //resp.getWriter().println("<iframe name=\"dummyframe\" id=\"dummyframe\" style=\"display: none;\"></iframe>");
-            resp.getWriter().println("<form target=\"_blank\" action=\"/api/userinformation/"+ clientInfo.getEmail() + "\" method=\"post\">\n" +
+            resp.getWriter().println("<form action=\"/api/userinformation/"+ clientInfo.getEmail() + "\" method=\"post\">\n" +
                 "  <label for=\"msg\">New location:</label><br/>\n" +
                 "  <input type=\"text\" id=\"location\" name=\"location\"/><br/>\n" +
                 //"  <input onclick=\"window.location.href = '/userinfo'\" />" +

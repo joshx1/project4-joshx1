@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
 import utilities.DBUtilities;
 
@@ -35,5 +36,10 @@ public class PurchaseTicketServlet extends HttpServlet {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        resp.setStatus(HttpStatus.OK_200);
+        resp.getWriter().println("<h1> Success </h1>");
+        resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
+            "<button name=\"returnhome\" value=" + ">Return to home</button>" +
+            "</form>");
     }
 }
