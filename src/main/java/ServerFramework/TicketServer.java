@@ -1,8 +1,9 @@
 package ServerFramework;
 
 import APIs.CreatEventServlet;
-import APIs.PurchaseTicketServlet;
+//import APIs.PurchaseTicketServlet;
 import Events.DisplayEventInfoServlet;
+import Events.PaymentServlet;
 import Login.LandingServlet;
 import Login.LoginServlet;
 import Logout.LogoutServlet;
@@ -11,6 +12,7 @@ import User.CreateEventInputServlet;
 import User.SearchServlet;
 import User.UserInfoServlet;
 import APIs.UpdateUserInformationServlet;
+import User.UserTransactionsServlet;
 import com.google.gson.Gson;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -70,8 +72,10 @@ public class TicketServer {
         context.addServlet(LandingServlet.class, "/");
         context.addServlet(LoginServlet.class, "/login");
         context.addServlet(UserInfoServlet.class, "/userinfo");
+        context.addServlet(UserTransactionsServlet.class, "/usertransactions");
         context.addServlet(DisplayAllEventsServlet.class, "/events");
         context.addServlet(DisplayEventInfoServlet.class, "/event/*");
+        context.addServlet(PaymentServlet.class, "/purchase/*");
         context.addServlet(CreateEventInputServlet.class, "/createevent");
         context.addServlet(SearchServlet.class, "/search");
         context.addServlet(LogoutServlet.class, "/logout");
@@ -79,7 +83,7 @@ public class TicketServer {
         // apis
         context.addServlet(UpdateUserInformationServlet.class, "/api/userinformation/*");
         context.addServlet(CreatEventServlet.class, "/api/event/*");
-        context.addServlet(PurchaseTicketServlet.class, "/api/buy/*");
+        //context.addServlet(PurchaseTicketServlet.class, "/api/buy/*");
         // handle logout
 
         // start it up!

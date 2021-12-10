@@ -36,12 +36,43 @@ public class DBUtilities {
         insertContactStmt.executeUpdate();
     }
 
+    /**
+     * Updates client's location.
+     * @param con
+     * @param email
+     * @param location
+     * @throws SQLException
+     */
     public static void executeInsertClientLocation(Connection con, String email, String location) throws SQLException {
         String inserClientLocationSql = "UPDATE ClientData SET location = ? WHERE email = ?;";
         PreparedStatement insertClientLocationStmt = con.prepareStatement(inserClientLocationSql);
         insertClientLocationStmt.setString(1, location);
         insertClientLocationStmt.setString(2, email);
         insertClientLocationStmt.executeUpdate();
+    }
+
+
+    /**
+     * Updates client's DOB.
+      * @param con
+     * @param email
+     * @param dob
+     * @throws SQLException
+     */
+    public static void executeInsertClientDOB(Connection con, String email, Date dob) throws SQLException {
+        String insertClientDOBSql = "UPDATE ClientData SET dob = ? WHERE email = ?;";
+        PreparedStatement insertClientDOBStmt = con.prepareStatement(insertClientDOBSql);
+        insertClientDOBStmt.setDate(1, dob);
+        insertClientDOBStmt.setString(2, email);
+        insertClientDOBStmt.executeUpdate();
+    }
+
+    public static void executeInsertClientName(Connection con, String email, String name) throws SQLException {
+        String insertClientNameSql = "UPDATE ClientData SET name = ? WHERE email = ?;";
+        PreparedStatement insertClientNameStmt = con.prepareStatement(insertClientNameSql);
+        insertClientNameStmt.setString(1, name);
+        insertClientNameStmt.setString(2, email);
+        insertClientNameStmt.executeUpdate();
     }
 
     public static int checkClientExists(Connection con, String email) throws SQLException {
@@ -113,17 +144,6 @@ public class DBUtilities {
         PreparedStatement selectAllContactsStmt = con.prepareStatement(selectAllContactsSql);
         ResultSet results = selectAllContactsStmt.executeQuery();
         return results;
-
-        //ArrayList<HashMap> eventDetails = new ArrayList<HashMap>();
-        //while(results.next()) {
-        //    HashMap<String, String> nameMap = new HashMap<String, String>();
-        //    nameMap.put("name", results.getString("name"));
-        //    eventDetails.add(nameMap);
-
-        //    System.out.printf("Name: %s\n", results.getString("name"));
-        //    System.out.printf("Extension: %s\n", results.getInt("extension"));
-        //    System.out.printf("Email: %s\n", results.getString("email"));
-        //    System.out.printf("Start Date: %s\n", results.getString("startdate"));
         }
 
     /**
@@ -157,7 +177,6 @@ public class DBUtilities {
             results.getString("creator"),
             results.getString("name"),
             results.getString("location"),
-            results.getInt("capacity"),
             results.getFloat("price"),
             results.getFloat("price_VIP"),
             results.getFloat("price_Student"),
@@ -167,18 +186,38 @@ public class DBUtilities {
     }
 
     /**
+     * Returns all events user purchased.
+     * @param con
+     * @param email
+     * @return
+     * @throws SQLException
+     */
+    public static ResultSet eventsPurchased(Connection con, String email) throws SQLException {
+        String purchasedEventsSql = "SELECT * FROM EventsData WHERE id = (SELECT event_id FROM EventsAndGuests WHERE email = ?);";
+        PreparedStatement purchasedEventsStmt = con.prepareStatement(purchasedEventsSql);
+        purchasedEventsStmt.setString(1,email);
+        ResultSet results = purchasedEventsStmt.executeQuery();
+        return results;
+    }
+
+    /**
      * Buys ticket from SQL database.
      * @param con
      * @param email
      * @param eventId
      * @throws SQLException
      */
-    public static void buyTicket(Connection con, String email, String eventId) throws SQLException {
-        String insertContactSql = "INSERT INTO EventAndGuests (event_id, email) VALUES (?, ?);";
+    public static void buyTicket(Connection con, String email, String eventId, String ticketType) throws SQLException {
+        String insertContactSql = "INSERT INTO EventsAndGuests (event_id, email, type) VALUES (?, ?, ?);";
         PreparedStatement insertContactStmt = con.prepareStatement(insertContactSql);
         insertContactStmt.setString(1, eventId);
         insertContactStmt.setString(2, email);
+        insertContactStmt.setString(3, ticketType);
         insertContactStmt.executeUpdate();
+        String increaseTicketCountSql = "UPDATE EventsAndGuests SET amount = amount + 1 WHERE email = ? AND type = ?;";
+        PreparedStatement increaseTicketCountStmt = con.prepareStatement(increaseTicketCountSql);
+        increaseTicketCountStmt.setString(1, email);
+        increaseTicketCountStmt.setString(2, ticketType);
     }
 
     /**
