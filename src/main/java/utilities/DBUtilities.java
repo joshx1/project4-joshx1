@@ -38,6 +38,7 @@ public class DBUtilities {
 
     /**
      * Updates client's location.
+     *
      * @param con
      * @param email
      * @param location
@@ -54,6 +55,7 @@ public class DBUtilities {
 
     /**
      * Updates event's location.
+     *
      * @param con
      * @param event_id
      * @param location
@@ -69,7 +71,8 @@ public class DBUtilities {
 
     /**
      * Updates client's DOB.
-      * @param con
+     *
+     * @param con
      * @param email
      * @param dob
      * @throws SQLException
@@ -94,13 +97,14 @@ public class DBUtilities {
         String checkClientExist = "SELECT COUNT(1) FROM ClientData WHERE email = ?;";
         PreparedStatement checkClientStmt = con.prepareStatement(checkClientExist);
         checkClientStmt.setString(1, email);
-        ResultSet results  = checkClientStmt.executeQuery();
+        ResultSet results = checkClientStmt.executeQuery();
         results.next();
         return results.getInt(1);
     }
 
     /**
      * Returns email for a given session ID.
+     *
      * @param con
      * @throws SQLException
      */
@@ -115,6 +119,7 @@ public class DBUtilities {
 
     /**
      * Returns user information given user email.
+     *
      * @param con
      * @throws SQLException
      */
@@ -151,6 +156,7 @@ public class DBUtilities {
 
     /**
      * Get details for all events.
+     *
      * @param con
      * @throws SQLException
      */
@@ -159,10 +165,11 @@ public class DBUtilities {
         PreparedStatement selectAllContactsStmt = con.prepareStatement(selectAllContactsSql);
         ResultSet results = selectAllContactsStmt.executeQuery();
         return results;
-        }
+    }
 
     /**
      * Get for events by name, partial matches are returned.
+     *
      * @param con
      * @throws SQLException
      */
@@ -171,13 +178,14 @@ public class DBUtilities {
         System.out.println(query);
         String searchSql = "SELECT * FROM EventsData WHERE name LIKE ?;";
         PreparedStatement searchStmt = con.prepareStatement(searchSql);
-        searchStmt.setString(1,'%' + query + '%');
+        searchStmt.setString(1, '%' + query + '%');
         ResultSet results = searchStmt.executeQuery();
         return results;
     }
 
     /**
      * Get details for a specific event.
+     *
      * @param con
      * @throws SQLException
      */
@@ -196,12 +204,13 @@ public class DBUtilities {
             results.getFloat("price_VIP"),
             results.getFloat("price_Student"),
             results.getDate("date")
-            );
+        );
         return eventInfo;
     }
 
     /**
      * Returns all events user purchased.
+     *
      * @param con
      * @param email
      * @return
@@ -210,13 +219,14 @@ public class DBUtilities {
     public static ResultSet eventsPurchased(Connection con, String email) throws SQLException {
         String purchasedEventsSql = "SELECT * FROM EventsData WHERE id = (SELECT event_id FROM EventsAndGuests WHERE email = ?);";
         PreparedStatement purchasedEventsStmt = con.prepareStatement(purchasedEventsSql);
-        purchasedEventsStmt.setString(1,email);
+        purchasedEventsStmt.setString(1, email);
         ResultSet results = purchasedEventsStmt.executeQuery();
         return results;
     }
 
     /**
      * Returns the events created by the owner of the email.
+     *
      * @param con
      * @param email
      * @return
@@ -225,45 +235,68 @@ public class DBUtilities {
     public static ResultSet eventsCreated(Connection con, String email) throws SQLException {
         String purchasedEventsSql = "SELECT * FROM EventsData WHERE email = ?);";
         PreparedStatement purchasedEventsStmt = con.prepareStatement(purchasedEventsSql);
-        purchasedEventsStmt.setString(1,email);
+        purchasedEventsStmt.setString(1, email);
         ResultSet results = purchasedEventsStmt.executeQuery();
         return results;
     }
 
     /**
      * Buys ticket from SQL database.
+     *
      * @param con
      * @param email
      * @param eventId
      * @throws SQLException
      */
     public static void buyTicket(Connection con, String email, String eventId, String ticketType) throws SQLException {
-        String insertContactSql = "INSERT INTO EventsAndGuests (event_id, email, type) VALUES (?, ?, ?);";
+        String insertContactSql = "INSERT INTO EventsAndGuests (event_id, email, type) VALUES (?, ?, ?) WHERE NOT EXISTS (SELECT * FROM EventsAndGuests WHERE email = ? AND event_id = ? AND ticket_type = ?);";
         PreparedStatement insertContactStmt = con.prepareStatement(insertContactSql);
         insertContactStmt.setString(1, eventId);
         insertContactStmt.setString(2, email);
         insertContactStmt.setString(3, ticketType);
+        insertContactStmt.setString(4, email);
+        insertContactStmt.setString(5, eventId);
+        insertContactStmt.setString(6, ticketType);
         insertContactStmt.executeUpdate();
-        String increaseTicketCountSql = "UPDATE EventsAndGuests SET amount = amount + 1 WHERE email = ? AND type = ?;";
+        String increaseTicketCountSql = "UPDATE EventsAndGuests SET amount = amount + 1 WHERE email = ? AND ticket_type = ?;";
         PreparedStatement increaseTicketCountStmt = con.prepareStatement(increaseTicketCountSql);
         increaseTicketCountStmt.setString(1, email);
         increaseTicketCountStmt.setString(2, ticketType);
     }
 
-    /**
-     * A method to demonstrate using a PrepareStatement to execute a database select
-     * @param con
-     * @throws SQLException
-     */
-    public static void executeSelectAndPrint(Connection con) throws SQLException {
-        String selectAllContactsSql = "SELECT * FROM contacts;";
-        PreparedStatement selectAllContactsStmt = con.prepareStatement(selectAllContactsSql);
-        ResultSet results = selectAllContactsStmt.executeQuery();
-        while(results.next()) {
-            System.out.printf("Name: %s\n", results.getString("name"));
-            System.out.printf("Extension: %s\n", results.getInt("extension"));
-            System.out.printf("Email: %s\n", results.getString("email"));
-            System.out.printf("Start Date: %s\n", results.getString("startdate"));
+    public static boolean checkIfOwnTicket(Connection con, String email, int event_id, String ticketType) throws SQLException {
+        String checkSql = "SELECT amount FROM EventsAndGuests WHERE email = ? AND event_id = ? AND ticket_type = ?;";
+        PreparedStatement checkStmt = con.prepareStatement(checkSql);
+        checkStmt.setString(1, email);
+        checkStmt.setInt(2, event_id);
+        checkStmt.setString(3, ticketType);
+        int amount = checkStmt.executeUpdate();
+        if (amount <= 0) {
+            String deleteSql = "DELETE FROM EventsAndGuests WHERE email = ? AND event_id = ? AND ticket_type = ?;";
+            PreparedStatement deleteStmt = con.prepareStatement(deleteSql);
+            deleteStmt.setString(1, email);
+            deleteStmt.setInt(2, event_id);
+            deleteStmt.setString(3, ticketType);
+            deleteStmt.executeQuery();
+            return false;
         }
+        return true;
+    }
+
+    public static void transferTicket(Connection con, String emailSender, String emailReceiver, int eventId, String ticketType) throws SQLException {
+        String insertContactSql = "INSERT INTO EventsAndGuests (event_id, email, type) VALUES (?, ?, ?) WHERE NOT EXISTS (SELECT * FROM EventsAndGuests WHERE email = ? AND event_id = ? AND ticket_type = ?);";
+        PreparedStatement insertContactStmt = con.prepareStatement(insertContactSql);
+        insertContactStmt.setInt(1, eventId);
+        insertContactStmt.setString(2, emailReceiver);
+        insertContactStmt.setString(3, ticketType);
+        insertContactStmt.executeUpdate();
+        String increaseTicketCountSql = "UPDATE EventsAndGuests SET amount = amount + 1 WHERE email = ? AND ticket_type = ?;";
+        PreparedStatement increaseTicketCountStmt = con.prepareStatement(increaseTicketCountSql);
+        increaseTicketCountStmt.setString(1, emailReceiver);
+        increaseTicketCountStmt.setString(2, ticketType);
+        String decreaseTicketCountSql = "UPDATE EventsAndGuests SET amount = amount - 1 WHERE email = ? AND ticket_type = ?;";
+        PreparedStatement decreaseTicketCountStmt = con.prepareStatement(decreaseTicketCountSql);
+        decreaseTicketCountStmt.setString(1, emailSender);
+        decreaseTicketCountStmt.setString(2, ticketType);
     }
 }
