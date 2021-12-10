@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
 import utilities.DBUtilities;
+import utilities.EventInfo;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -32,9 +33,10 @@ public class UserTransactionsServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1> User Transactions </h1>");
             while(resultSet.next()) {
+                EventInfo eventInfo = DBUtilities.selectEventByID(connection, resultSet.getInt("event_id"));
                 resp.getWriter().println("<h1>Name: " + resultSet.getString("name") + "</h1>");
                 resp.getWriter().println("<p><a href=\"/event/" + resultSet.getInt("id") + "\">" + resultSet.getString("name") + "</a>");
-                resp.getWriter().println("<form action=\"/transfer/" + resultSet.getInt("id") + "/" + resultSet.getString("type") + "\" method=\"post\">\n" +
+                resp.getWriter().println("<form action=\"/transfer/" + resultSet.getInt("id") + "/" + resultSet.getString("ticket_type") + "\" method=\"post\">\n" +
                     "  <label for=\"msg\">Transfer ticket to (enter email):</label><br/>\n" +
                     "  <input type=\"text\" id=\"emailReceiver\" name=\"emailReceiver\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +

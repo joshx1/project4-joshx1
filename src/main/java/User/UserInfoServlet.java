@@ -11,10 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -59,13 +56,6 @@ public class UserInfoServlet extends HttpServlet {
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
         String[] bodyParts = query.split("=");
         System.out.println(Arrays.toString(bodyParts));
-        // Process the request body.
-        //try(BufferedReader reader = req.getReader()) {
-        //    String body = URLDecoder.decode(reader.readLine(), StandardCharsets.UTF_8.toString());
-        //    //TODO: verify the body exists and it contains a =
-        //    System.out.println("body: " + body);
-        //    bodyParts = body.split("=");
-        //}
         if (bodyParts[0].equals("name") && bodyParts.length == 2) {
             System.out.println(URI[3]);
             System.out.println(bodyParts[1]);
