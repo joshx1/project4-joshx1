@@ -51,6 +51,7 @@ public class UserInfoServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setStatus(HttpStatus.OK_200);
         String [] URI = req.getRequestURI().split("/");

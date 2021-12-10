@@ -53,6 +53,21 @@ public class DBUtilities {
 
 
     /**
+     * Updates event's location.
+     * @param con
+     * @param event_id
+     * @param location
+     * @throws SQLException
+     */
+    public static void executeInsertEventLocation(Connection con, int event_id, String location) throws SQLException {
+        String inserClientLocationSql = "UPDATE EventsData SET location = ? WHERE id = ?;";
+        PreparedStatement insertClientLocationStmt = con.prepareStatement(inserClientLocationSql);
+        insertClientLocationStmt.setString(1, location);
+        insertClientLocationStmt.setInt(2, event_id);
+        insertClientLocationStmt.executeUpdate();
+    }
+
+    /**
      * Updates client's DOB.
       * @param con
      * @param email
@@ -194,6 +209,21 @@ public class DBUtilities {
      */
     public static ResultSet eventsPurchased(Connection con, String email) throws SQLException {
         String purchasedEventsSql = "SELECT * FROM EventsData WHERE id = (SELECT event_id FROM EventsAndGuests WHERE email = ?);";
+        PreparedStatement purchasedEventsStmt = con.prepareStatement(purchasedEventsSql);
+        purchasedEventsStmt.setString(1,email);
+        ResultSet results = purchasedEventsStmt.executeQuery();
+        return results;
+    }
+
+    /**
+     * Returns the events created by the owner of the email.
+     * @param con
+     * @param email
+     * @return
+     * @throws SQLException
+     */
+    public static ResultSet eventsCreated(Connection con, String email) throws SQLException {
+        String purchasedEventsSql = "SELECT * FROM EventsData WHERE email = ?);";
         PreparedStatement purchasedEventsStmt = con.prepareStatement(purchasedEventsSql);
         purchasedEventsStmt.setString(1,email);
         ResultSet results = purchasedEventsStmt.executeQuery();
