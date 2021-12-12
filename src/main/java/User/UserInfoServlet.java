@@ -17,6 +17,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 /**
  * Implements logic for the /login path where Slack will redirect requests after
  * the user has entered their auth info.
@@ -28,6 +30,7 @@ public class UserInfoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // retrieve the ID of this session
         String sessionId = req.getSession(true).getId();
+        if (checkAuthentication(req, resp, sessionId)) return;
         try {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilities.emailFromSessionId(connection, sessionId);
@@ -37,19 +40,34 @@ public class UserInfoServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1> User information </h1>");
             resp.getWriter().println("<h1>Name: " + clientInfo.getName() + "</h1>");
+            resp.getWriter().println("<form action=\"/userinfo/" + clientInfo.getEmail() + "\" method=\"post\">\n" +
+                "  <label for=\"name\">New name:</label><br/>\n" +
+                "  <input type=\"name\" id=\"name\" name=\"name\"/><br/>\n" +
+                "  <input type=\"submit\" value=\"Submit\"/>\n" +
+                "</form>");
             resp.getWriter().println("<h1>Location: " + clientInfo.getLocation() + "</h1>");
-            resp.getWriter().println("<form action=\"/userinfo\" method=\"post\">\n" +
+            resp.getWriter().println("<form action=\"/userinfo/" + clientInfo.getEmail() + "\" method=\"post\">\n" +
                 "  <label for=\"msg\">New location:</label><br/>\n" +
                 "  <input type=\"text\" id=\"location\" name=\"location\"/><br/>\n" +
                 "  <input type=\"submit\" value=\"Submit\"/>\n" +
                 "</form>");
+            resp.getWriter().println("<h1>Date of Birth: " + clientInfo.getDob() + "</h1>");
+            resp.getWriter().println("<form action=\"/userinfo/" + clientInfo.getEmail() + "\" method=\"post\">\n" +
+                "  <label for=\"DOB\">New date of birth:</label><br/>\n" +
+                "  <input type=\"date\" id=\"DOB\" name=\"DOB\"/><br/>\n" +
+                "  <input type=\"submit\" value=\"Submit\"/>\n" +
+                "</form>");
+
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String sessionId = req.getSession(true).getId();
+        if (checkAuthentication(req, resp, sessionId)) return;
         resp.setStatus(HttpStatus.OK_200);
         String [] URI = req.getRequestURI().split("/");
         req.getQueryString();
@@ -57,27 +75,23 @@ public class UserInfoServlet extends HttpServlet {
         String[] bodyParts = query.split("=");
         System.out.println(Arrays.toString(bodyParts));
         if (bodyParts[0].equals("name") && bodyParts.length == 2) {
-            System.out.println(URI[3]);
-            System.out.println(bodyParts[1]);
             try {
                 Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertClientName(connection, URI[3], bodyParts[1]);
+                DBUtilities.executeInsertClientName(connection, URI[2], bodyParts[1]);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } else if (bodyParts[0].equals("location") && bodyParts.length == 2) {
-            System.out.println(URI[3]);
-            System.out.println(bodyParts[1]);
             try {
                 Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertClientLocation(connection, URI[3], bodyParts[1]);
+                DBUtilities.executeInsertClientLocation(connection, URI[2], bodyParts[1]);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } else if (bodyParts[0].equals("DOB") && bodyParts.length == 2) {
             try {
                 Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertClientDOB(connection, URI[3], Date.valueOf(bodyParts[1]));
+                DBUtilities.executeInsertClientDOB(connection, URI[2], Date.valueOf(bodyParts[1]));
             } catch (SQLException e) {
                 e.printStackTrace();
             }

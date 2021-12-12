@@ -10,6 +10,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
 import utilities.DBUtilities;
 import org.apache.commons.io.IOUtils;
+import utilities.DBUtilitiesEvents;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -45,7 +46,7 @@ public class SearchServlet extends HttpServlet {
         String queryValue = queryList[1];
         try {
             Connection connection = DBCPDataSource.getConnection();
-            ResultSet results = DBUtilities.searchEvents(connection, queryValue);
+            ResultSet results = DBUtilitiesEvents.searchEvents(connection, queryValue);
             resp.setStatus(HttpStatus.OK_200);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1> All events searched for </h1>");

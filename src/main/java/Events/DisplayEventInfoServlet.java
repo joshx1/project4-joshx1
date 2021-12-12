@@ -10,20 +10,28 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
 import utilities.DBUtilities;
+import utilities.DBUtilitiesEvents;
 import utilities.EventInfo;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+/**
+ * This class displays all information relevant to a specific event.
+ */
 public class DisplayEventInfoServlet extends HttpServlet {
     ClientInfo clientInfo;
+
+    /**
+     * This method displays all information to a specific event.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // retrieve the ID of this session
         String sessionId = req.getSession(true).getId();
@@ -35,7 +43,7 @@ public class DisplayEventInfoServlet extends HttpServlet {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilities.emailFromSessionId(connection, sessionId);
             clientInfo = DBUtilities.userInfoFromEmail(connection, email);
-            EventInfo eventInfo = DBUtilities.executeSelectSpecificEvent(connection, eventId);
+            EventInfo eventInfo = DBUtilitiesEvents.executeSelectSpecificEvent(connection, eventId);
             System.out.println(eventInfo.getName());
             resp.setStatus(HttpStatus.OK_200);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
@@ -58,8 +66,11 @@ public class DisplayEventInfoServlet extends HttpServlet {
                 "</form>");
             if (eventInfo.getCreator().equals(email)) {
                 resp.getWriter().println("<h1>Edit event</h1>");
-                resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"get\">" +
-                    "<button name=\"type\" value=VIP>Buy ticket</button>" +
+                resp.getWriter().println("<h1>Name: " + eventInfo.getName() + "</h1>");
+                resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">\n" +
+                    "  <label for=\"name\">New name:</label><br/>\n" +
+                    "  <input type=\"name\" id=\"name\" name=\"name\"/><br/>\n" +
+                    "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
                 resp.getWriter().println("<h1>Location: " + eventInfo.getLocation() + "</h1>");
                 resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
@@ -74,6 +85,13 @@ public class DisplayEventInfoServlet extends HttpServlet {
         }
     }
 
+    /**
+     * This method updates the information of the current specific event.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setStatus(HttpStatus.OK_200);
@@ -83,12 +101,13 @@ public class DisplayEventInfoServlet extends HttpServlet {
         String[] bodyParts = query.split("=");
         System.out.println(Arrays.toString(bodyParts));
         System.out.println(Arrays.toString(URI));
+        int eventId = Integer.parseInt(URI[2]);
         if (bodyParts[0].equals("name") && bodyParts.length == 2) {
             System.out.println(URI[2]);
             System.out.println(bodyParts[1]);
             try {
                 Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertClientName(connection, URI[2], bodyParts[1]);
+                DBUtilitiesEvents.executeInsertEventName(connection, eventId, bodyParts[1]);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -96,14 +115,14 @@ public class DisplayEventInfoServlet extends HttpServlet {
             System.out.println(bodyParts[1]);
             try {
                 Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertEventLocation(connection, Integer.parseInt(URI[2]), bodyParts[1]);
+                DBUtilitiesEvents.executeInsertEventLocation(connection, eventId, bodyParts[1]);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } else if (bodyParts[0].equals("DOB") && bodyParts.length == 2) {
+        } else if (bodyParts[0].equals("date") && bodyParts.length == 2) {
             try {
                 Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertClientDOB(connection, URI[2], Date.valueOf(bodyParts[1]));
+                DBUtilitiesEvents.executeInsertEventDate(connection, eventId, Date.valueOf(bodyParts[1]));
             } catch (SQLException e) {
                 e.printStackTrace();
             }

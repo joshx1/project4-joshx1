@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
 import utilities.DBUtilities;
+import utilities.DBUtilitiesEvents;
 import utilities.EventInfo;
 
 import java.io.IOException;
@@ -27,16 +28,17 @@ public class UserTransactionsServlet extends HttpServlet {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilities.emailFromSessionId(connection, sessionId);
             clientInfo = DBUtilities.userInfoFromEmail(connection, email);
-            ResultSet resultSet = DBUtilities.eventsPurchased(connection, email);
+            ResultSet resultSet = DBUtilitiesEvents.eventsPurchased(connection, email);
             System.out.println(clientInfo.getName());
             resp.setStatus(HttpStatus.OK_200);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1> User Transactions </h1>");
             while(resultSet.next()) {
-                EventInfo eventInfo = DBUtilities.selectEventByID(connection, resultSet.getInt("event_id"));
-                resp.getWriter().println("<h1>Name: " + resultSet.getString("name") + "</h1>");
-                resp.getWriter().println("<p><a href=\"/event/" + resultSet.getInt("id") + "\">" + resultSet.getString("name") + "</a>");
-                resp.getWriter().println("<form action=\"/transfer/" + resultSet.getInt("id") + "/" + resultSet.getString("ticket_type") + "\" method=\"post\">\n" +
+                EventInfo eventInfo = DBUtilitiesEvents.executeSelectSpecificEvent(connection, resultSet.getInt("event_id"));
+                resp.getWriter().println("<h1>Name: " + eventInfo.getName() + "</h1>");
+                resp.getWriter().println("<h1>Tickets purchased: " + resultSet.getInt("amount") + " " + resultSet.getString("ticket_type") + " tickets" + "</h1>");
+                resp.getWriter().println("<p><a href=\"/event/" + eventInfo.getId() + "\">" + eventInfo.getName() + "</a>");
+                resp.getWriter().println("<form action=\"/transfer/" + eventInfo.getId() + "/" + resultSet.getString("ticket_type") + "\" method=\"post\">\n" +
                     "  <label for=\"msg\">Transfer ticket to (enter email):</label><br/>\n" +
                     "  <input type=\"text\" id=\"emailReceiver\" name=\"emailReceiver\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +

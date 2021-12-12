@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ class UserInfoServletTest {
             HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
             // We also need a mocked context to return the data structure
             ServletContext context = mock(ServletContext.class);
-
+            HttpSession sessionMock = mock(HttpSession.class);
+            when(mockedRequest.getSession()).thenReturn(sessionMock);
             // set up the mocked request to return a correct parameter value
             when(mockedRequest.getParameter("message")).thenReturn(expected);
             // set the mocked request to return the mocked context
@@ -75,4 +77,5 @@ class UserInfoServletTest {
             fail(e.getMessage());
         }
     }
+
 }

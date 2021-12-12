@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.io.FileReader;
 
 /**
- * Example of using Apache DBCP ConnectionPool.
+ * A connection pool using Apache DBCP ConnectionPool which handles our connections to the MySQL database on Stargate.
  * Taken from https://www.baeldung.com/java-connection-pooling
  */
 public class DBCPDataSource {

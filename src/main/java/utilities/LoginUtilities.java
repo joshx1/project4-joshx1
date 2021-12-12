@@ -130,7 +130,7 @@ public class LoginUtilities {
         String id_token = (String) map.get(TicketServerConstants.ID_TOKEN_KEY);
         String email = (String) payloadMap.get(TicketServerConstants.EMAIL_KEY);
         boolean email_verified = (boolean) payloadMap.get(TicketServerConstants.EMAIL_VERIFIED_KEY);
-        return new ClientInfo(username, access_token, token_type, id_token, email, email_verified, null);
+        return new ClientInfo(username, access_token, token_type, id_token, email, email_verified, null, null);
     }
 
     /**

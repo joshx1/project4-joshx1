@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import utilities.DBUtilities;
+import utilities.DBUtilitiesTicketing;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -32,7 +33,7 @@ public class TransferTicketServlet extends HttpServlet {
             Connection connection = DBCPDataSource.getConnection();
             String emailSender = DBUtilities.emailFromSessionId(connection, sessionId);
             //ClientInfo clientInfo = DBUtilities.userInfoFromEmail(connection, email);
-            DBUtilities.transferTicket(connection, emailSender, emailReceiver, eventId, ticketType);
+            DBUtilitiesTicketing.transferTicket(connection, emailSender, emailReceiver, eventId, ticketType);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

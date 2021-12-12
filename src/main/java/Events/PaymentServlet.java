@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
-import utilities.ClientInfo;
+
+import utilities.DBUtilitiesTicketing;
 
 public class PaymentServlet extends HttpServlet {
 
@@ -52,14 +53,14 @@ public class PaymentServlet extends HttpServlet {
         System.out.println(Arrays.toString(bodyParts));
         System.out.println(Arrays.toString(URI));
         String ticketType = bodyParts[1];
-        String eventId = URI[2];
+        Integer eventId = Integer.parseInt(URI[2]);
         // retrieve the ID of this session
         String sessionId = req.getSession(true).getId();
         try {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilities.emailFromSessionId(connection, sessionId);
             //ClientInfo clientInfo = DBUtilities.userInfoFromEmail(connection, email);
-            DBUtilities.buyTicket(connection, email, eventId, ticketType);
+            DBUtilitiesTicketing.buyTicket(connection, email, eventId, ticketType);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

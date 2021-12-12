@@ -45,6 +45,12 @@ public class LoginServlet extends HttpServlet {
                 clientInfo = DBUtilities.userInfoFromEmail(connection, email);
             } catch (SQLException e) {
                 e.printStackTrace();
+                req.getSession().setAttribute(TicketServerConstants.CLIENT_INFO_KEY, null);
+                resp.getWriter().println("<h1>Failed to retrieve information.</h1>");
+                resp.getWriter().println("<form action=\"/" + "\" method=\"get\">" +
+                    "<button name=\"returnhome\" value=" + ">Return to login again.</button>" +
+                    "</form>");
+                return;
             }
         } else {
 
@@ -83,6 +89,9 @@ public class LoginServlet extends HttpServlet {
             resp.setStatus(HttpStatus.OK_200);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1>Oops, login unsuccessful</h1>");
+            resp.getWriter().println("<form action=\"/" + "\" method=\"get\">" +
+                "<button name=\"returnhome\" value=" + ">Return to login again.</button>" +
+                "</form>");
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
 
         } else {

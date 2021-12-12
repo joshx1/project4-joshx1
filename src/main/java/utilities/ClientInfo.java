@@ -1,5 +1,5 @@
 package utilities;
-
+import java.sql.*;
 /**
  * A class to maintain info about each client.
  */
@@ -12,8 +12,9 @@ public class ClientInfo {
     private String email;
     private boolean email_verified;
     private String location;
+    private Date dob;
 
-    public ClientInfo(String name, String access_token, String token_type, String id_token, String email, boolean email_verified, String location) {
+    public ClientInfo(String name, String access_token, String token_type, String id_token, String email, boolean email_verified, String location, Date dob) {
         this.name = name;
         this.access_token = access_token;
         this.token_type = token_type;
@@ -21,6 +22,7 @@ public class ClientInfo {
         this.email = email;
         this.email_verified = email_verified;
         this.location = location;
+        this.dob = dob;
     }
 
     public String getName() {
@@ -77,5 +79,13 @@ public class ClientInfo {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
     }
 }
