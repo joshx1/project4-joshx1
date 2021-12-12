@@ -65,7 +65,7 @@ public class TicketServer {
         context.addServlet(DisplayAllEventsServlet.class, "/events");
         context.addServlet(DisplayEventInfoServlet.class, "/event/*");
         context.addServlet(PaymentServlet.class, "/purchase/*");
-        context.addServlet(CreateEventInputServlet.class, "/createevent/*");
+        context.addServlet(CreateEventServlet.class, "/createevent/*");
         context.addServlet(SearchServlet.class, "/search");
         context.addServlet(LogoutServlet.class, "/logout");
 

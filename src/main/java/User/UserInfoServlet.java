@@ -20,12 +20,19 @@ import java.util.Arrays;
 import static utilities.VerifyAuthenticated.checkAuthentication;
 
 /**
- * Implements logic for the /login path where Slack will redirect requests after
- * the user has entered their auth info.
+ * Handles all responsibility of displaying and editing the current user information.
  */
 public class UserInfoServlet extends HttpServlet {
 
     private ClientInfo clientInfo;
+
+    /**
+     * Shows the user all of their relevant user information and allows them to input changes.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // retrieve the ID of this session
@@ -64,7 +71,13 @@ public class UserInfoServlet extends HttpServlet {
         }
     }
 
-
+    /**
+     * Takes the users inputted changes and sends them to database.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String sessionId = req.getSession(true).getId();
         if (checkAuthentication(req, resp, sessionId)) return;

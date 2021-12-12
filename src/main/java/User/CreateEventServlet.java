@@ -18,7 +18,7 @@ import java.sql.SQLException;
 
 import utilities.DBUtilitiesEvents;
 
-public class CreateEventInputServlet extends HttpServlet {
+public class CreateEventServlet extends HttpServlet {
 
     private ClientInfo clientInfo;
 

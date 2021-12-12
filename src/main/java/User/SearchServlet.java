@@ -18,9 +18,19 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.Arrays;
 
+/**
+ * This class handles all search event responsibilities.
+ */
 public class SearchServlet extends HttpServlet {
     ClientInfo clientInfo;
 
+    /**
+     * Allows the user to search for events by name.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String sessionId = req.getSession(true).getId();
         try {
@@ -38,6 +48,13 @@ public class SearchServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Returns all events searched for by user.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream());

@@ -13,13 +13,20 @@ import java.io.IOException;
  */
 public class LogoutServlet extends HttpServlet {
 
+    /**
+     * This method logs the user out.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         // log out by invalidating the session
         req.getSession().invalidate();
         resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
-        resp.getWriter().println("<h1>Thanks for playing</h1>");
+        resp.getWriter().println("<h1>Logout successful.</h1>");
         resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
 
     }

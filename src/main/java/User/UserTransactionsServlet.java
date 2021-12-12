@@ -17,9 +17,19 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Shows a users brought tickets and user transfer ticket functionality.
+ */
 public class UserTransactionsServlet extends HttpServlet {
     ClientInfo clientInfo;
 
+    /**
+     * Displays a page to user which shows the tickets they have purchased and allows them to transfer these tickets.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // retrieve the ID of this session

@@ -15,7 +15,18 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+/**
+ * Handles the transfer ticket functionality.
+ */
 public class TransferTicketServlet extends HttpServlet {
+
+    /**
+     * Given a request, this will transfer the ticket from one user to another.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String[] URI = req.getRequestURI().split("/");
