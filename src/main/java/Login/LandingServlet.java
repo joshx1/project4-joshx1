@@ -16,6 +16,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 /**
  * Landing page that allows a user to request to login with Slack.
  */
@@ -26,7 +28,6 @@ public class LandingServlet extends HttpServlet {
 
         // retrieve the ID of this session
         String sessionId = req.getSession(true).getId();
-
         // determine whether the user is already authenticated
         Object clientInfoObj = req.getSession().getAttribute(TicketServerConstants.CLIENT_INFO_KEY);
         boolean flag = false;

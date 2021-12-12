@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 /**
  * This class handles the displaying of all events to the user.
  */
@@ -28,8 +30,10 @@ public class DisplayAllEventsServlet extends HttpServlet{
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         // retrieve the ID of this session
         String sessionId = req.getSession(true).getId();
+        if (checkAuthentication(req, resp, sessionId)) return;
         try {
             Connection connection = DBCPDataSource.getConnection();
             ResultSet results = DBUtilitiesEvents.executeSelectEvents(connection);

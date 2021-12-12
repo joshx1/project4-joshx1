@@ -18,6 +18,8 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.Arrays;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 /**
  * This class handles all search event responsibilities.
  */
@@ -56,6 +58,9 @@ public class SearchServlet extends HttpServlet {
      * @throws IOException
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String sessionId = req.getSession(true).getId();
+        if (checkAuthentication(req, resp, sessionId)) return;
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream());
         String[] queryList = query.split("=");

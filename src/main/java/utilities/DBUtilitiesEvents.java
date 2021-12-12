@@ -152,4 +152,27 @@ public class DBUtilitiesEvents {
         insertEventDateStmt.executeUpdate();
     }
 
+    public static void executeInsertEventStandardPrice(Connection con, int eventId, float price) throws SQLException {
+        String insertEventPriceSql = "UPDATE EventsData SET price = ? WHERE id = ?;";
+        PreparedStatement insertEventPriceStmt = con.prepareStatement(insertEventPriceSql);
+        insertEventPriceStmt.setFloat(1, price);
+        insertEventPriceStmt.setInt(2, eventId);
+        insertEventPriceStmt.executeUpdate();
+    }
+
+    public static void executeInsertEventStudentPrice(Connection con, int eventId, float price) throws SQLException {
+        String insertEventPriceSql = "UPDATE EventsData SET price_student = ? WHERE id = ?;";
+        PreparedStatement insertEventPriceStmt = con.prepareStatement(insertEventPriceSql);
+        insertEventPriceStmt.setFloat(1, price);
+        insertEventPriceStmt.setInt(2, eventId);
+        insertEventPriceStmt.executeUpdate();
+    }
+
+    public static void executeInsertEventVIPPrice(Connection con, int eventId, float price) throws SQLException {
+        String insertEventPriceSql = "UPDATE EventsData SET price_VIP = ? WHERE id = ?;";
+        PreparedStatement insertEventPriceStmt = con.prepareStatement(insertEventPriceSql);
+        insertEventPriceStmt.setFloat(1, price);
+        insertEventPriceStmt.setInt(2, eventId);
+        insertEventPriceStmt.executeUpdate();
+    }
 }

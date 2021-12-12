@@ -18,6 +18,8 @@ import java.sql.SQLException;
 
 import utilities.DBUtilitiesEvents;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 public class CreateEventServlet extends HttpServlet {
 
     private ClientInfo clientInfo;
@@ -28,6 +30,7 @@ public class CreateEventServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String sessionId = req.getSession(true).getId();
+        if (checkAuthentication(req, resp, sessionId)) return;
         try {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilities.emailFromSessionId(connection, sessionId);
@@ -55,6 +58,9 @@ public class CreateEventServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String sessionId = req.getSession(true).getId();
+        if (checkAuthentication(req, resp, sessionId)) return;
         String[] URI = req.getRequestURI().split("/");
         // Process the request body.
         try (BufferedReader reader = req.getReader()) {

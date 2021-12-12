@@ -18,6 +18,8 @@ import utilities.DBUtilities;
 import java.io.IOException;
 import java.util.Map;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 /**
  * Implements logic for the /login path where Slack will redirect requests after
  * the user has entered their auth info.
@@ -72,6 +74,9 @@ public class LoginServlet extends HttpServlet {
             Map<String, Object> response = LoginUtilities.jsonStrToMap(responseString);
 
             clientInfo = LoginUtilities.verifyTokenResponse(response, sessionId);
+            if (clientInfo == null) {
+                if (checkAuthentication(req, resp, sessionId)) return;
+            }
 
             try {
                 Connection connection = DBCPDataSource.getConnection();

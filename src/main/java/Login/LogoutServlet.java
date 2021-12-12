@@ -24,6 +24,7 @@ public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         // log out by invalidating the session
+        req.getSession().setAttribute(TicketServerConstants.CLIENT_INFO_KEY, null);
         req.getSession().invalidate();
         resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
         resp.getWriter().println("<h1>Logout successful.</h1>");

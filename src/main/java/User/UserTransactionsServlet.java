@@ -17,6 +17,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 /**
  * Shows a users brought tickets and user transfer ticket functionality.
  */
@@ -34,6 +36,7 @@ public class UserTransactionsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // retrieve the ID of this session
         String sessionId = req.getSession(true).getId();
+        if (checkAuthentication(req, resp, sessionId)) return;
         try {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilities.emailFromSessionId(connection, sessionId);

@@ -19,6 +19,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 /**
  * This class displays all information relevant to a specific event.
  */
@@ -35,6 +37,7 @@ public class DisplayEventInfoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // retrieve the ID of this session
         String sessionId = req.getSession(true).getId();
+        if (checkAuthentication(req, resp, sessionId)) return;
         String [] URI = req.getRequestURI().split("/");
         System.out.println(URI.toString());
         int eventId = Integer.parseInt(URI[2]);
@@ -66,16 +69,38 @@ public class DisplayEventInfoServlet extends HttpServlet {
                 "</form>");
             if (eventInfo.getCreator().equals(email)) {
                 resp.getWriter().println("<h1>Edit event</h1>");
-                resp.getWriter().println("<h1>Name: " + eventInfo.getName() + "</h1>");
                 resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">\n" +
                     "  <label for=\"name\">New name:</label><br/>\n" +
                     "  <input type=\"name\" id=\"name\" name=\"name\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
-                resp.getWriter().println("<h1>Location: " + eventInfo.getLocation() + "</h1>");
                 resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
                     "  <label for=\"msg\">New location:</label><br/>\n" +
                     "  <input type=\"text\" id=\"location\" name=\"location\"/><br/>\n" +
+                    "  <input type=\"submit\" value=\"Submit\"/>\n" +
+                    "</form>");
+
+                resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
+                    "  <label for=\"msg\">New date:</label><br/>\n" +
+                    "  <input type=\"date\" id=\"date\" name=\"date\"/><br/>\n" +
+                    "  <input type=\"submit\" value=\"Submit\"/>\n" +
+                    "</form>");
+
+                resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
+                    "  <label for=\"msg\">New standard price:</label><br/>\n" +
+                    "  <input type=\"price\" id=\"price\" name=\"price\"/><br/>\n" +
+                    "  <input type=\"submit\" value=\"Submit\"/>\n" +
+                    "</form>");
+
+                resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
+                    "  <label for=\"msg\">New student price:</label><br/>\n" +
+                    "  <input type=\"priceStudent\" id=\"priceStudent\" name=\"priceStudent\"/><br/>\n" +
+                    "  <input type=\"submit\" value=\"Submit\"/>\n" +
+                    "</form>");
+
+                resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
+                    "  <label for=\"msg\">New VIP price:</label><br/>\n" +
+                    "  <input type=\"priceVIP\" id=\"priceVIP\" name=\"priceVIP\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
             }
@@ -126,7 +151,28 @@ public class DisplayEventInfoServlet extends HttpServlet {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        } else if (bodyParts[0].equals("price") && bodyParts.length == 2) {
+            try {
+                Connection connection = DBCPDataSource.getConnection();
+                DBUtilitiesEvents.executeInsertEventStandardPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else if (bodyParts[0].equals("priceStudent") && bodyParts.length == 2) {
+            try {
+                Connection connection = DBCPDataSource.getConnection();
+                DBUtilitiesEvents.executeInsertEventStudentPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else if (bodyParts[0].equals("priceVIP") && bodyParts.length == 2) {
+        try {
+            Connection connection = DBCPDataSource.getConnection();
+            DBUtilitiesEvents.executeInsertEventVIPPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }
         System.out.println("Databases yes");
         resp.getWriter().println("<h1> Update success! </h1>");
         resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +

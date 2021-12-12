@@ -15,6 +15,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 /**
  * Handles the transfer ticket functionality.
  */
@@ -29,6 +31,9 @@ public class TransferTicketServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String sessionId = req.getSession(true).getId();
+        if (checkAuthentication(req, resp, sessionId)) return;
         String[] URI = req.getRequestURI().split("/");
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
@@ -38,8 +43,6 @@ public class TransferTicketServlet extends HttpServlet {
         String emailReceiver = bodyParts[1];
         int eventId = Integer.parseInt(URI[2]);
         String ticketType = URI[3];
-        // retrieve the ID of this session
-        String sessionId = req.getSession(true).getId();
         try {
             Connection connection = DBCPDataSource.getConnection();
             String emailSender = DBUtilities.emailFromSessionId(connection, sessionId);

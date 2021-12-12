@@ -16,10 +16,12 @@ import java.util.Arrays;
 
 import utilities.DBUtilitiesTicketing;
 
+import static utilities.VerifyAuthenticated.checkAuthentication;
+
 public class PaymentServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //String sessionId = req.getSession(true).getId();
+        String sessionId = req.getSession(true).getId();
         //try {
         //    Connection connection = DBCPDataSource.getConnection();
         //    String email = DBUtilities.emailFromSessionId(connection, sessionId);
@@ -27,6 +29,7 @@ public class PaymentServlet extends HttpServlet {
         //} catch (SQLException throwables) {
         //    throwables.printStackTrace();
         //}
+        if (checkAuthentication(req, resp, sessionId)) return;
         String[] URI = req.getRequestURI().split("/");
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
