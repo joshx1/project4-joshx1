@@ -17,6 +17,7 @@ import utilities.DBUtilitiesClient;
 
 import java.io.IOException;
 import java.util.Map;
+import java.net.URLDecoder;
 
 import static utilities.VerifyAuthenticated.checkAuthentication;
 
@@ -26,7 +27,6 @@ import static utilities.VerifyAuthenticated.checkAuthentication;
  */
 public class LoginServlet extends HttpServlet {
 
-    ClientInfo clientInfo;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // retrieve the ID of this session
@@ -34,11 +34,9 @@ public class LoginServlet extends HttpServlet {
 
         // determine whether the user is already authenticated
         Object clientInfoObj = req.getSession().getAttribute(TicketServerConstants.CLIENT_INFO_KEY);
+        ClientInfo clientInfo = null;
         if(clientInfoObj != null) {
             // already authed, no need to log in
-            resp.setStatus(HttpStatus.OK_200);
-            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
-            //resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             //Connection connection = null;
             try {
                 Connection connection = DBCPDataSource.getConnection();
@@ -46,11 +44,14 @@ public class LoginServlet extends HttpServlet {
                 clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             } catch (SQLException e) {
                 e.printStackTrace();
+                resp.setStatus(HttpStatus.UNAUTHORIZED_401);
+                resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
                 req.getSession().setAttribute(TicketServerConstants.CLIENT_INFO_KEY, null);
                 resp.getWriter().println("<h1>Failed to retrieve information.</h1>");
                 resp.getWriter().println("<form action=\"/" + "\" method=\"get\">" +
                     "<button name=\"returnhome\" value=" + ">Return to login again.</button>" +
                     "</form>");
+                resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
                 return;
             }
         } else {
@@ -90,7 +91,7 @@ public class LoginServlet extends HttpServlet {
             req.getSession().setAttribute(TicketServerConstants.CLIENT_INFO_KEY, clientInfo);
         }
         if(clientInfo == null) {
-            resp.setStatus(HttpStatus.OK_200);
+            resp.setStatus(HttpStatus.UNAUTHORIZED_401);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1>Oops, login unsuccessful</h1>");
             resp.getWriter().println("<form action=\"/" + "\" method=\"get\">" +
@@ -99,13 +100,14 @@ public class LoginServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
 
         } else {
-            resp.getWriter().println("<h1>Hello, " + clientInfo.getName() + "</h1>");
-            resp.getWriter().println("<p><a href=\"/logout\">Signout</a>");
+            resp.setStatus(HttpStatus.OK_200);
+            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<p><a href=\"/userinfo\">User Information</a>");
             resp.getWriter().println("<p><a href=\"/usertransactions\">User Transactions</a>");
             resp.getWriter().println("<p><a href=\"/events\">Event List</a>");
-            resp.getWriter().println("<p><a href=\"/search\">Search Event</a>");
+            resp.getWriter().println("<p><a href=\"/search\">Search Events</a>");
             resp.getWriter().println("<p><a href=\"/createevent\">Create Event</a>");
+            resp.getWriter().println("<p><a href=\"/logout\">Signout</a>");
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         }
     }

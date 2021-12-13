@@ -10,6 +10,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import utilities.DBUtilitiesEvents;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,11 +42,17 @@ public class DisplayAllEventsServlet extends HttpServlet{
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1> All events </h1>");
             while(results.next()) {
-                resp.getWriter().println("<h1>Name: " + results.getString("name") + "</h1>");
-                resp.getWriter().println("<p><a href=\"/event/" + results.getInt("id") + "\">" + results.getString("name") + "</a>");
+                resp.getWriter().println("<h1>Name: " + URLDecoder.decode(results.getString("name"), "UTF-8") + "</h1>");
+                resp.getWriter().println("<p><a href=\"/event/" + results.getInt("id") + "\">" + "Event details</a>");
             }
+            resp.getWriter().println(TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException e) {
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
+            resp.getWriter().println(TicketServerConstants.ERROR);
+            resp.getWriter().println(TicketServerConstants.RETURN_HOME);
+            resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             e.printStackTrace();
         }
     }

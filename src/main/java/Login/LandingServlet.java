@@ -40,6 +40,7 @@ public class LandingServlet extends HttpServlet {
             }
             if (flag == true) {
                 // already authed, no need to log in
+                resp.setStatus(HttpStatus.OK_200);
                 resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
                 resp.getWriter().println("<h1>You have already been authenticated</h1>");
                 resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
@@ -82,9 +83,11 @@ public class LandingServlet extends HttpServlet {
             resp.setStatus(HttpStatus.OK_200);
             PrintWriter writer = resp.getWriter();
             writer.println(TicketServerConstants.PAGE_HEADER);
-            writer.println("<h1>Welcome to the Login with Slack Demo Application</h1>");
+            writer.println("<h1>Welcome to Josh's ticketing site!</h1>");
+            writer.println("<h2>Please log in with Slack to continue.</h2>");
             writer.println("<a href=\"" + url + "\"><img src=\"" + TicketServerConstants.BUTTON_URL + "\"/></a>");
             writer.println(TicketServerConstants.PAGE_FOOTER);
         }
+        return;
     }
 }

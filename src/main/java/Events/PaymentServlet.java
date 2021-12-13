@@ -23,13 +23,6 @@ public class PaymentServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String sessionId = req.getSession(true).getId();
-        //try {
-        //    Connection connection = DBCPDataSource.getConnection();
-        //    String email = DBUtilities.emailFromSessionId(connection, sessionId);
-        //    ClientInfo clientInfo = DBUtilities.userInfoFromEmail(connection, email);
-        //} catch (SQLException throwables) {
-        //    throwables.printStackTrace();
-        //}
 
         if (checkAuthentication(req, resp, sessionId)) return;
         String[] URI = req.getRequestURI().split("/");
@@ -53,6 +46,9 @@ public class PaymentServlet extends HttpServlet {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            return;
         }
         resp.getWriter().println("<h1>Do you have enough money to purchase this event?</h1>");
         resp.getWriter().println("<form action=\"/purchase/" + eventId + "\" method=\"post\">" +
@@ -83,6 +79,7 @@ public class PaymentServlet extends HttpServlet {
             DBUtilitiesTicketing.buyTicket(connection, email, eventId, ticketType);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
             return;
         }

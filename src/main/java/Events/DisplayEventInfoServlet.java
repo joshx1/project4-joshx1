@@ -14,6 +14,7 @@ import utilities.DBUtilitiesEvents;
 import utilities.EventInfo;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -25,7 +26,6 @@ import static utilities.VerifyAuthenticated.checkAuthentication;
  * This class displays all information relevant to a specific event.
  */
 public class DisplayEventInfoServlet extends HttpServlet {
-    ClientInfo clientInfo;
 
     /**
      * This method displays all information to a specific event.
@@ -45,14 +45,12 @@ public class DisplayEventInfoServlet extends HttpServlet {
         try {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
-            clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             EventInfo eventInfo = DBUtilitiesEvents.executeSelectSpecificEvent(connection, eventId);
-            System.out.println(eventInfo.getName());
             resp.setStatus(HttpStatus.OK_200);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1> User information </h1>");
-            resp.getWriter().println("<h1>Name: " + eventInfo.getName() + "</h1>");
-            resp.getWriter().println("<h1>Location: " + eventInfo.getLocation() + "</h1>");
+            resp.getWriter().println("<h1>Name: " + URLDecoder.decode(eventInfo.getName(), "UTF-8") + "</h1>");
+            resp.getWriter().println("<h1>Location: " + URLDecoder.decode(eventInfo.getLocation(), "UTF-8") + "</h1>");
             resp.getWriter().println("<h1>Price: " + eventInfo.getPrice() + "</h1>");
             resp.getWriter().println("<form action=\"/purchase/" + eventInfo.getId() + "/standard" + "\" method=\"get\">" +
                 "<button name=\"type\" value=standard>Buy ticket</button>" +
@@ -75,32 +73,32 @@ public class DisplayEventInfoServlet extends HttpServlet {
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
                 resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
-                    "  <label for=\"msg\">New location:</label><br/>\n" +
+                    "  <label for=\"location\">New location:</label><br/>\n" +
                     "  <input type=\"text\" id=\"location\" name=\"location\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
 
                 resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
-                    "  <label for=\"msg\">New date:</label><br/>\n" +
+                    "  <label for=\"date\">New date:</label><br/>\n" +
                     "  <input type=\"date\" id=\"date\" name=\"date\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
 
                 resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
-                    "  <label for=\"msg\">New standard price:</label><br/>\n" +
-                    "  <input type=\"price\" id=\"price\" name=\"price\"/><br/>\n" +
+                    "  <label for=\"price\">New standard price:</label><br/>\n" +
+                    "  <input type=\"number\" id=\"price\" name=\"price\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
 
                 resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
-                    "  <label for=\"msg\">New student price:</label><br/>\n" +
-                    "  <input type=\"priceStudent\" id=\"priceStudent\" name=\"priceStudent\"/><br/>\n" +
+                    "  <label for=\"priceStudent\">New student price:</label><br/>\n" +
+                    "  <input type=\"number\" id=\"priceStudent\" name=\"priceStudent\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
 
                 resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
-                    "  <label for=\"msg\">New VIP price:</label><br/>\n" +
-                    "  <input type=\"priceVIP\" id=\"priceVIP\" name=\"priceVIP\"/><br/>\n" +
+                    "  <label for=\"priceVIP\">New VIP price:</label><br/>\n" +
+                    "  <input type=\"number\" id=\"priceVIP\" name=\"priceVIP\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
                 resp.getWriter().println("<h1>Delete event</h1>");
@@ -108,10 +106,16 @@ public class DisplayEventInfoServlet extends HttpServlet {
                     "<button name=\"type\" value=delete>Delete event</button>" +
                     "</form>");
             }
+            resp.getWriter().println(TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException throwables) {
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             throwables.printStackTrace();
+            return;
         }
+        return;
     }
 
     /**

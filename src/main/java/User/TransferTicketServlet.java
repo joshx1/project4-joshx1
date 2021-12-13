@@ -47,16 +47,19 @@ public class TransferTicketServlet extends HttpServlet {
         try {
             Connection connection = DBCPDataSource.getConnection();
             String emailSender = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
-            //ClientInfo clientInfo = DBUtilities.userInfoFromEmail(connection, email);
             DBUtilitiesTicketing.transferTicket(connection, emailSender, emailReceiver, eventId, ticketType);
         } catch (SQLException throwables) {
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             throwables.printStackTrace();
             return;
         }
         resp.setStatus(HttpStatus.OK_200);
+        resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
         resp.getWriter().println(TicketServerConstants.SUCCESS + TicketServerConstants.RETURN_HOME);
+        resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         return;
     }
 }

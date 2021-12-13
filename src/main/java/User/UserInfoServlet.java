@@ -12,6 +12,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -23,8 +24,6 @@ import static utilities.VerifyAuthenticated.checkAuthentication;
  * Handles all responsibility of displaying and editing the current user information.
  */
 public class UserInfoServlet extends HttpServlet {
-
-    private ClientInfo clientInfo;
 
     /**
      * Shows the user all of their relevant user information and allows them to input changes.
@@ -38,21 +37,21 @@ public class UserInfoServlet extends HttpServlet {
         // retrieve the ID of this session
         String sessionId = req.getSession(true).getId();
         if (checkAuthentication(req, resp, sessionId)) return;
+        resp.setStatus(HttpStatus.OK_200);
+        resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
         try {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
-            clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
+            ClientInfo clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             System.out.println(clientInfo.getName());
-            resp.setStatus(HttpStatus.OK_200);
-            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1> User information </h1>");
-            resp.getWriter().println("<h1>Name: " + clientInfo.getName() + "</h1>");
+            resp.getWriter().println("<h1>Name: " + URLDecoder.decode(clientInfo.getName(), "UTF-8") + "</h1>");
             resp.getWriter().println("<form action=\"/userinfo/" + clientInfo.getEmail() + "\" method=\"post\">\n" +
                 "  <label for=\"name\">New name:</label><br/>\n" +
                 "  <input type=\"name\" id=\"name\" name=\"name\"/><br/>\n" +
                 "  <input type=\"submit\" value=\"Submit\"/>\n" +
                 "</form>");
-            resp.getWriter().println("<h1>Location: " + clientInfo.getLocation() + "</h1>");
+            resp.getWriter().println("<h1>Location: " + URLDecoder.decode(clientInfo.getLocation(), "UTF-8") + "</h1>");
             resp.getWriter().println("<form action=\"/userinfo/" + clientInfo.getEmail() + "\" method=\"post\">\n" +
                 "  <label for=\"msg\">New location:</label><br/>\n" +
                 "  <input type=\"text\" id=\"location\" name=\"location\"/><br/>\n" +
@@ -64,14 +63,16 @@ public class UserInfoServlet extends HttpServlet {
                 "  <input type=\"date\" id=\"DOB\" name=\"DOB\"/><br/>\n" +
                 "  <input type=\"submit\" value=\"Submit\"/>\n" +
                 "</form>");
-
+            resp.getWriter().println(TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException e) {
             e.printStackTrace();
-            resp.setStatus(HttpStatus.BAD_REQUEST_400);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             return;
         }
+        resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
+        return;
     }
 
     /**
@@ -101,11 +102,15 @@ public class UserInfoServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             return;
         }
         resp.setStatus(HttpStatus.OK_200);
+        resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
         resp.getWriter().println(TicketServerConstants.SUCCESS + TicketServerConstants.RETURN_HOME);
+        resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         return;
     }
 }
