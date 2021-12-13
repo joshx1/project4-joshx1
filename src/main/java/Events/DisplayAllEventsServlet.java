@@ -53,7 +53,6 @@ public class DisplayAllEventsServlet extends HttpServlet{
             resp.getWriter().println(TicketServerConstants.ERROR);
             resp.getWriter().println(TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
-            e.printStackTrace();
         }
     }
 }

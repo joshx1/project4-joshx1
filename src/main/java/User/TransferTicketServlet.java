@@ -14,7 +14,6 @@ import utilities.DBUtilitiesTicketing;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 import static utilities.VerifyAuthenticated.checkAuthentication;
 
@@ -39,8 +38,6 @@ public class TransferTicketServlet extends HttpServlet {
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
         String[] bodyParts = query.split("=");
-        System.out.println(Arrays.toString(bodyParts));
-        System.out.println(Arrays.toString(URI));
         String emailReceiver = bodyParts[1];
         int eventId = Integer.parseInt(URI[2]);
         String ticketType = URI[3];
@@ -53,7 +50,6 @@ public class TransferTicketServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
-            throwables.printStackTrace();
             return;
         }
         resp.setStatus(HttpStatus.OK_200);

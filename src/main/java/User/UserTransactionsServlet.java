@@ -42,7 +42,6 @@ public class UserTransactionsServlet extends HttpServlet {
             String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
             ClientInfo clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             ResultSet resultSet = DBUtilitiesEvents.eventsPurchased(connection, email);
-            System.out.println(clientInfo.getName());
             resp.getWriter().println("<h1> User Transactions </h1>");
             while(resultSet.next()) {
                 EventInfo eventInfo = DBUtilitiesEvents.executeSelectSpecificEvent(connection, resultSet.getInt("event_id"));
@@ -56,7 +55,6 @@ public class UserTransactionsServlet extends HttpServlet {
                     "</form>");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             return;

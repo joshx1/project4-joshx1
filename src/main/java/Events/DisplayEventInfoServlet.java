@@ -38,9 +38,7 @@ public class DisplayEventInfoServlet extends HttpServlet {
         String sessionId = req.getSession(true).getId();
         if (checkAuthentication(req, resp, sessionId)) return;
         String [] URI = req.getRequestURI().split("/");
-        System.out.println(URI.toString());
         int eventId = Integer.parseInt(URI[2]);
-        System.out.println(URI[2]);
         try {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
@@ -111,7 +109,6 @@ public class DisplayEventInfoServlet extends HttpServlet {
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
-            throwables.printStackTrace();
             return;
         }
         return;
@@ -130,19 +127,13 @@ public class DisplayEventInfoServlet extends HttpServlet {
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
         String[] bodyParts = query.split("=");
-        System.out.println(Arrays.toString(bodyParts));
-        System.out.println(Arrays.toString(URI));
         int eventId = Integer.parseInt(URI[2]);
 
         try {
             Connection connection = DBCPDataSource.getConnection();
             if (bodyParts[1].equals("delete")) {
-                System.out.println(URI[2]);
-                System.out.println("yes");
                 DBUtilitiesEvents.executeDeleteEvent(connection, eventId);
             } else if (bodyParts[0].equals("name") && bodyParts.length == 2) {
-                System.out.println(URI[2]);
-                System.out.println(bodyParts[1]);
                 DBUtilitiesEvents.executeInsertEventName(connection, eventId, bodyParts[1]);
             } else if (bodyParts[0].equals("location") && bodyParts.length == 2) {
                 DBUtilitiesEvents.executeInsertEventLocation(connection, eventId, bodyParts[1]);
@@ -156,9 +147,10 @@ public class DisplayEventInfoServlet extends HttpServlet {
                 DBUtilitiesEvents.executeInsertEventVIPPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             return;
         }
         resp.setStatus(HttpStatus.OK_200);

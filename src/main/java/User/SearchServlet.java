@@ -39,7 +39,6 @@ public class SearchServlet extends HttpServlet {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
@@ -78,7 +77,6 @@ public class SearchServlet extends HttpServlet {
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream());
         String[] queryList = query.split("=");
-        System.out.println(Arrays.toString(queryList));
         String queryValue = queryList[1];
         String searchType = queryList[0];
         ResultSet results = null;
@@ -90,7 +88,6 @@ public class SearchServlet extends HttpServlet {
                 results = DBUtilitiesEvents.searchEventsLocation(connection, queryValue);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
@@ -108,7 +105,11 @@ public class SearchServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
+            resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
+            return;
         }
         return;
     }

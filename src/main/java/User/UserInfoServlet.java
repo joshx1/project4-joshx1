@@ -43,7 +43,6 @@ public class UserInfoServlet extends HttpServlet {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
             ClientInfo clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
-            System.out.println(clientInfo.getName());
             resp.getWriter().println("<h1> User information </h1>");
             resp.getWriter().println("<h1>Name: " + URLDecoder.decode(clientInfo.getName(), "UTF-8") + "</h1>");
             resp.getWriter().println("<form action=\"/userinfo/" + clientInfo.getEmail() + "\" method=\"post\">\n" +
@@ -66,7 +65,6 @@ public class UserInfoServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException e) {
-            e.printStackTrace();
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             return;
@@ -89,7 +87,6 @@ public class UserInfoServlet extends HttpServlet {
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
         String[] bodyParts = query.split("=");
-        System.out.println(Arrays.toString(bodyParts));
         try {
             Connection connection = DBCPDataSource.getConnection();
             if (bodyParts[0].equals("name") && bodyParts.length == 2) {
@@ -100,7 +97,6 @@ public class UserInfoServlet extends HttpServlet {
                 DBUtilitiesClient.executeInsertClientDOB(connection, URI[2], Date.valueOf(bodyParts[1]));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);

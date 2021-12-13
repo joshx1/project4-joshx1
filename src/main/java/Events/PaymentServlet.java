@@ -39,8 +39,6 @@ public class PaymentServlet extends HttpServlet {
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
         String[] bodyParts = query.split("=");
-        System.out.println(Arrays.toString(bodyParts));
-        System.out.println(Arrays.toString(URI));
         String ticketType = URI[3];
         String eventId = URI[2];
         try {
@@ -48,18 +46,23 @@ public class PaymentServlet extends HttpServlet {
             String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
             if (!DBUtilitiesTicketing.checkIfEventFull(connection, Integer.parseInt(eventId))) {
                 resp.setStatus(HttpStatus.OK_200);
+                resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
                 resp.getWriter().println("<h1> Event is sold out. </h1>");
                 resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
                     "<button name=\"returnhome\" value=" + ">Return to home</button>" +
                     "</form>");
+                resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
                 return;
             }
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             return;
         }
+        resp.setStatus(HttpStatus.OK_200);
+        resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
         resp.getWriter().println("<h1>Do you have enough money to purchase this event?</h1>");
         resp.getWriter().println("<form action=\"/purchase/" + eventId + "\" method=\"post\">" +
             "<button name=\"type\" value=" + ticketType + ">Yes</button>" +
@@ -67,6 +70,7 @@ public class PaymentServlet extends HttpServlet {
         resp.getWriter().println("<form action=\"/login\" method=\"get\">" +
             "<button name=\"type\" value=>No</button>" +
             "</form>");
+        resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         return;
     }
 
@@ -83,8 +87,6 @@ public class PaymentServlet extends HttpServlet {
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
         String[] bodyParts = query.split("=");
-        System.out.println(Arrays.toString(bodyParts));
-        System.out.println(Arrays.toString(URI));
         String ticketType = bodyParts[1];
         Integer eventId = Integer.parseInt(URI[2]);
         // retrieve the ID of this session
@@ -92,16 +94,18 @@ public class PaymentServlet extends HttpServlet {
         try {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
-            //ClientInfo clientInfo = DBUtilities.userInfoFromEmail(connection, email);
             DBUtilitiesTicketing.buyTicket(connection, email, eventId, ticketType);
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             return;
         }
         resp.setStatus(HttpStatus.OK_200);
+        resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
         resp.getWriter().println(TicketServerConstants.SUCCESS + TicketServerConstants.RETURN_HOME);
+        resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         return;
     }
 }

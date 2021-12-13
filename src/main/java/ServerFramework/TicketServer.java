@@ -35,7 +35,7 @@ public class TicketServer {
             startup();
         } catch(Exception e) {
             // catch generic Exception as that is what is thrown by server start method
-            e.printStackTrace();
+            System.out.println("Error starting up server!");
         }
     }
 

@@ -43,7 +43,6 @@ public class LandingServlet extends HttpServlet {
                 String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
                 flag = true;
             } catch (SQLException e) {
-                e.printStackTrace();
                 flag = false;
             }
             if (flag == true) {

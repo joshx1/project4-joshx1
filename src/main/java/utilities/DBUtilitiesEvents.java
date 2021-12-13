@@ -67,8 +67,6 @@ public class DBUtilitiesEvents {
      * @throws SQLException
      */
     public static ResultSet searchEventsName(Connection con, String query) throws SQLException {
-        System.out.println("DB");
-        System.out.println(query);
         String searchSql = "SELECT * FROM EventsData WHERE name LIKE ?;";
         PreparedStatement searchStmt = con.prepareStatement(searchSql);
         searchStmt.setString(1, '%' + query + '%');
@@ -82,8 +80,6 @@ public class DBUtilitiesEvents {
      * @throws SQLException
      */
     public static ResultSet searchEventsLocation(Connection con, String query) throws SQLException {
-        System.out.println("DB");
-        System.out.println(query);
         String searchSql = "SELECT * FROM EventsData WHERE location LIKE ?;";
         PreparedStatement searchStmt = con.prepareStatement(searchSql);
         searchStmt.setString(1, '%' + query + '%');

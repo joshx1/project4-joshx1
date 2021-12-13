@@ -47,7 +47,6 @@ public class CreateEventServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
-            throwables.printStackTrace();
             return;
         }
         resp.setStatus(HttpStatus.OK_200);
@@ -91,8 +90,6 @@ public class CreateEventServlet extends HttpServlet {
         // Process the request body.
         try (BufferedReader reader = req.getReader()) {
             String body = URLDecoder.decode(reader.readLine(), StandardCharsets.UTF_8.toString());
-            //TODO: verify the body exists and it contains a =
-            System.out.println("body: " + body);
             String name = null;
             String location = null;
             Date date = null;
@@ -103,31 +100,21 @@ public class CreateEventServlet extends HttpServlet {
             float priceVIP = 0;
             String [] bodies = body.split("&");
             String [] bodyParts = null;
-            System.out.println(bodies);
             for (int i = 0; i < bodies.length; i++) {
                 bodyParts = bodies[i].split("=");
-                System.out.println(bodyParts[0]);
                 if (bodyParts[0].equals("name") && bodyParts.length == 2) {
-                    System.out.println(bodyParts[0]);
                     name = bodyParts[1];
                 } else if (bodyParts[0].equals("location") && bodyParts.length == 2) {
-                    System.out.println(bodyParts[0]);
                     location = bodyParts[1];
                 } else if (bodyParts[0].equals("date") && bodyParts.length == 2) {
-                    System.out.println(bodyParts[0]);
-                    System.out.println(bodyParts[1]);
                     date = Date.valueOf(bodyParts[1]);
                 } else if (bodyParts[0].equals("priceStandard") && bodyParts.length == 2) {
-                    System.out.println(bodyParts[0]);
                     price = Float.parseFloat(bodyParts[1]);
                 } else if (bodyParts[0].equals("priceStudent") && bodyParts.length == 2) {
-                    System.out.println(bodyParts[0]);
                     priceStudent = Float.parseFloat(bodyParts[1]);
                 } else if (bodyParts[0].equals("priceVIP") && bodyParts.length == 2) {
-                    System.out.println(bodyParts[0]);
                     priceVIP = Float.parseFloat(bodyParts[1]);
                 } else if (bodyParts[0].equals("capacity") && bodyParts.length == 2) {
-                    System.out.println(bodyParts[0]);
                     capacity = Integer.parseInt(bodyParts[1]);
                 }
             }
@@ -138,7 +125,6 @@ public class CreateEventServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
-            throwables.printStackTrace();
             return;
         }
         resp.setStatus(HttpStatus.OK_200);

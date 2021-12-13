@@ -51,7 +51,6 @@ public class LoginServlet extends HttpServlet {
                 String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
                 clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             } catch (SQLException e) {
-                e.printStackTrace();
                 resp.setStatus(HttpStatus.UNAUTHORIZED_401);
                 resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
                 req.getSession().setAttribute(TicketServerConstants.CLIENT_INFO_KEY, null);
@@ -93,7 +92,7 @@ public class LoginServlet extends HttpServlet {
                     DBUtilitiesClient.executeInsertClientData(connection, clientInfo.getName(), clientInfo.getAccess_token(), clientInfo.getToken_type(), clientInfo.getId_token(), clientInfo.getEmail(), clientInfo.isEmail_verified());
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                clientInfo = null;
             }
 
             req.getSession().setAttribute(TicketServerConstants.CLIENT_INFO_KEY, clientInfo);

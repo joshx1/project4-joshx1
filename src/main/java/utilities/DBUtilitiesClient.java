@@ -66,8 +66,6 @@ public class DBUtilitiesClient {
     public static void executeInsertClientDOB(Connection con, String email, Date dob) throws SQLException {
         String insertClientDOBSql = "UPDATE ClientData SET dob = ? WHERE email = ?;";
         PreparedStatement insertClientDOBStmt = con.prepareStatement(insertClientDOBSql);
-        System.out.println(dob);
-        System.out.println(email);
         insertClientDOBStmt.setDate(1, dob);
         insertClientDOBStmt.setString(2, email);
         insertClientDOBStmt.executeUpdate();
