@@ -29,6 +29,7 @@ public class PaymentServlet extends HttpServlet {
         //} catch (SQLException throwables) {
         //    throwables.printStackTrace();
         //}
+
         if (checkAuthentication(req, resp, sessionId)) return;
         String[] URI = req.getRequestURI().split("/");
         req.getQueryString();
@@ -38,6 +39,20 @@ public class PaymentServlet extends HttpServlet {
         System.out.println(Arrays.toString(URI));
         String ticketType = URI[3];
         String eventId = URI[2];
+        try {
+            Connection connection = DBCPDataSource.getConnection();
+            String email = DBUtilities.emailFromSessionId(connection, sessionId);
+            if (!DBUtilitiesTicketing.checkIfEventFull(connection, Integer.parseInt(eventId))) {
+                resp.setStatus(HttpStatus.OK_200);
+                resp.getWriter().println("<h1> Event is sold out. </h1>");
+                resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
+                    "<button name=\"returnhome\" value=" + ">Return to home</button>" +
+                    "</form>");
+                return;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         resp.getWriter().println("<h1>Do you have enough money to purchase this event?</h1>");
         resp.getWriter().println("<form action=\"/purchase/" + eventId + "\" method=\"post\">" +
             "<button name=\"type\" value=" + ticketType + ">Yes</button>" +

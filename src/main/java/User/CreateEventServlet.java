@@ -49,6 +49,8 @@ public class CreateEventServlet extends HttpServlet {
                 "  <input type=\"number\" id=\"priceStudent\" name=\"priceStudent\" required/><br/>\n" +
                 "  <label for=\"priceVIP\">VIP price:</label><br/>\n" +
                 "  <input type=\"number\" id=\"priceVIP\" name=\"priceVIP\" required/><br/>\n" +
+                "  <label for=\"capacity\">Capacity:</label><br/>\n" +
+                "  <input type=\"number\" id=\"capacity\" name=\"capacity\" required/><br/>\n" +
                 "  <input type=\"submit\" value=\"Submit\"/>\n" +
                 "</form>");
         } catch (SQLException throwables) {
@@ -99,10 +101,13 @@ public class CreateEventServlet extends HttpServlet {
                 } else if (bodyParts[0].startsWith("priceVIP") && bodyParts.length == 2) {
                     System.out.println(bodyParts[0]);
                     priceVIP = Float.parseFloat(bodyParts[1]);
+                } else if (bodyParts[0].startsWith("capacity") && bodyParts.length == 2) {
+                    System.out.println(bodyParts[0]);
+                    priceVIP = Integer.parseInt(bodyParts[1]);
                 }
             }
             Connection connection = DBCPDataSource.getConnection();
-            DBUtilitiesEvents.executeInsertEvent(connection, URI[2], name, location, date, price, priceStudent, priceVIP);
+            DBUtilitiesEvents.executeInsertEvent(connection, URI[2], name, location, date, price, priceStudent, priceVIP, capacity);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

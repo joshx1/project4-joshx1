@@ -20,8 +20,8 @@ public class DBUtilitiesEvents {
      * @param priceVIP
      * @throws SQLException
      */
-    public static void executeInsertEvent(Connection con, String email, String name, String location, Date date, float price, float priceStudent, float priceVIP) throws SQLException {
-        String insertEventSql = "INSERT INTO EventsData (creator, name, date, location, price, price_student, price_VIP) VALUES (?, ?, ?, ?, ?, ?, ?);";
+    public static void executeInsertEvent(Connection con, String email, String name, String location, Date date, float price, float priceStudent, float priceVIP, int capacity) throws SQLException {
+        String insertEventSql = "INSERT INTO EventsData (creator, name, date, location, price, price_student, price_VIP, capacity) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement insertClientLocationStmt = con.prepareStatement(insertEventSql);
         insertClientLocationStmt.setString(1, email);
         insertClientLocationStmt.setString(2, name);
@@ -30,7 +30,15 @@ public class DBUtilitiesEvents {
         insertClientLocationStmt.setDouble(5, price);
         insertClientLocationStmt.setDouble(6, priceStudent);
         insertClientLocationStmt.setDouble(7, priceVIP);
+        insertClientLocationStmt.setDouble(8, capacity);
         insertClientLocationStmt.executeUpdate();
+    }
+
+    public static void executeDeleteEvent(Connection con, int eventId) throws SQLException {
+        String deleteSql = "DELETE FROM EventsData WHERE id = ?;";
+        PreparedStatement deleteStmt = con.prepareStatement(deleteSql);
+        deleteStmt.setInt(1, eventId);
+        deleteStmt.executeUpdate();
     }
 
     /**
@@ -82,7 +90,8 @@ public class DBUtilitiesEvents {
             results.getFloat("price"),
             results.getFloat("price_VIP"),
             results.getFloat("price_Student"),
-            results.getDate("date")
+            results.getDate("date"),
+            results.getInt("capacity")
         );
         return eventInfo;
     }

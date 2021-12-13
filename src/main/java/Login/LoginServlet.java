@@ -38,7 +38,6 @@ public class LoginServlet extends HttpServlet {
             // already authed, no need to log in
             resp.setStatus(HttpStatus.OK_200);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
-            resp.getWriter().println("<h1>You have already been authenticated</h1>");
             //resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
             //Connection connection = null;
             try {
@@ -100,7 +99,6 @@ public class LoginServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
 
         } else {
-            //resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1>Hello, " + clientInfo.getName() + "</h1>");
             resp.getWriter().println("<p><a href=\"/logout\">Signout</a>");
             resp.getWriter().println("<p><a href=\"/userinfo\">User Information</a>");

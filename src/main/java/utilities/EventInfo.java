@@ -10,8 +10,9 @@ public class EventInfo {
     private float priceVIP;
     private float priceStudent;
     private Date date;
+    private int capacity;
 
-    public EventInfo(int id, String creator, String name, String location, float price, float priceVIP, float priceStudent, Date date) {
+    public EventInfo(int id, String creator, String name, String location, float price, float priceVIP, float priceStudent, Date date, int capacity) {
         this.id = id;
         this.creator = creator;
         this.name = name;
@@ -20,6 +21,7 @@ public class EventInfo {
         this.priceVIP = priceVIP;
         this.priceStudent = priceStudent;
         this.date = date;
+        this.capacity = capacity;
     }
 
     public int getId() {
@@ -84,5 +86,13 @@ public class EventInfo {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 }

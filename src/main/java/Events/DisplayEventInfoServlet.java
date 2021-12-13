@@ -103,6 +103,10 @@ public class DisplayEventInfoServlet extends HttpServlet {
                     "  <input type=\"priceVIP\" id=\"priceVIP\" name=\"priceVIP\"/><br/>\n" +
                     "  <input type=\"submit\" value=\"Submit\"/>\n" +
                     "</form>");
+                resp.getWriter().println("<h1>Delete event</h1>");
+                resp.getWriter().println("<form action=\"/event/" + eventInfo.getId() + "\" method=\"post\">" +
+                    "<button name=\"type\" value=delete>Delete event</button>" +
+                    "</form>");
             }
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException throwables) {
@@ -127,7 +131,16 @@ public class DisplayEventInfoServlet extends HttpServlet {
         System.out.println(Arrays.toString(bodyParts));
         System.out.println(Arrays.toString(URI));
         int eventId = Integer.parseInt(URI[2]);
-        if (bodyParts[0].equals("name") && bodyParts.length == 2) {
+        if (bodyParts[1].equals("delete")) {
+            System.out.println(URI[2]);
+            System.out.println("yes");
+            try {
+                Connection connection = DBCPDataSource.getConnection();
+                DBUtilitiesEvents.executeDeleteEvent(connection, eventId);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else if (bodyParts[0].equals("name") && bodyParts.length == 2) {
             System.out.println(URI[2]);
             System.out.println(bodyParts[1]);
             try {

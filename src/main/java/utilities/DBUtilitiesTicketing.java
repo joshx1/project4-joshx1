@@ -38,6 +38,29 @@ public class DBUtilitiesTicketing {
         increaseTicketCountStmt.setString(1, email);
         increaseTicketCountStmt.setString(2, ticketType);
         increaseTicketCountStmt.executeUpdate();
+        String increaseTicketsSoldSql = "UPDATE EventsData SET tickets_sold = tickets_sold + 1 WHERE id = ?;";
+        PreparedStatement increaseTicketsSoldStmt = con.prepareStatement(increaseTicketsSoldSql);
+        increaseTicketsSoldStmt.setInt(1, eventId);
+        increaseTicketsSoldStmt.executeUpdate();
+    }
+
+    public static boolean checkIfEventFull(Connection con, int eventId) throws SQLException {
+        String checkSql = "SELECT capacity FROM EventsData WHERE id = ?;";
+        PreparedStatement checkStmt = con.prepareStatement(checkSql);
+        checkStmt.setInt(1, eventId);
+        ResultSet resultSet = checkStmt.executeQuery();
+        resultSet.next();
+        int capacity = resultSet.getInt("capacity");
+        String soldSql = "SELECT tickets_sold FROM EventsData WHERE id = ?;";
+        PreparedStatement soldStmt = con.prepareStatement(soldSql);
+        soldStmt.setInt(1, eventId);
+        ResultSet soldSet = soldStmt.executeQuery();
+        soldSet.next();
+        int soldTickets = soldSet.getInt("tickets_sold");
+        if (soldTickets < capacity) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -64,7 +87,7 @@ public class DBUtilitiesTicketing {
             deleteStmt.setString(1, email);
             deleteStmt.setInt(2, eventId);
             deleteStmt.setString(3, ticketType);
-            deleteStmt.executeQuery();
+            deleteStmt.executeUpdate();
             return false;
         }
         return true;
