@@ -107,7 +107,8 @@ public class DBUtilitiesEvents {
             results.getFloat("price_VIP"),
             results.getFloat("price_Student"),
             results.getDate("date"),
-            results.getInt("capacity")
+            results.getInt("capacity"),
+            results.getInt("tickets_sold")
         );
         return eventInfo;
     }

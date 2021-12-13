@@ -48,6 +48,9 @@ public class DisplayEventInfoServlet extends HttpServlet {
             resp.getWriter().println("<h1> User information </h1>");
             resp.getWriter().println("<h1>Name: " + URLDecoder.decode(eventInfo.getName(), "UTF-8") + "</h1>");
             resp.getWriter().println("<h1>Location: " + URLDecoder.decode(eventInfo.getLocation(), "UTF-8") + "</h1>");
+            resp.getWriter().println("<h1>Date: " + eventInfo.getDate() + "</h1>");
+            resp.getWriter().println("<h1>Capacity: " + eventInfo.getCapacity() + "</h1>");
+            resp.getWriter().println("<h1>Tickets sold: " + eventInfo.getTicketsSold() + "</h1>");
             resp.getWriter().println("<h1>Price: " + eventInfo.getPrice() + "</h1>");
             resp.getWriter().println("<form action=\"/purchase/" + eventInfo.getId() + "/standard" + "\" method=\"get\">" +
                 "<button name=\"type\" value=standard>Buy ticket</button>" +

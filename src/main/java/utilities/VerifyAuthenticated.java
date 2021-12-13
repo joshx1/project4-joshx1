@@ -27,7 +27,6 @@ public class VerifyAuthenticated {
             Connection connection = DBCPDataSource.getConnection();
             String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
             req.getSession().setAttribute(TicketServerConstants.CLIENT_INFO_KEY, null);
             resp.setStatus(HttpStatus.UNAUTHORIZED_401);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);

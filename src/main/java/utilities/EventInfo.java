@@ -14,6 +14,7 @@ public class EventInfo {
     private float priceStudent;
     private Date date;
     private int capacity;
+    private int ticketsSold;
 
     /**
      * Constructor for event info.
@@ -26,8 +27,9 @@ public class EventInfo {
      * @param priceStudent
      * @param date
      * @param capacity
+     * @param ticketsSold
      */
-    public EventInfo(int id, String creator, String name, String location, float price, float priceVIP, float priceStudent, Date date, int capacity) {
+    public EventInfo(int id, String creator, String name, String location, float price, float priceVIP, float priceStudent, Date date, int capacity, int ticketsSold) {
         this.id = id;
         this.creator = creator;
         this.name = name;
@@ -37,6 +39,7 @@ public class EventInfo {
         this.priceStudent = priceStudent;
         this.date = date;
         this.capacity = capacity;
+        this.ticketsSold = ticketsSold;
     }
 
     /**
@@ -113,5 +116,13 @@ public class EventInfo {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public int getTicketsSold() {
+        return ticketsSold;
+    }
+
+    public void setTicketsSold(int ticketsSold) {
+        this.ticketsSold = ticketsSold;
     }
 }
