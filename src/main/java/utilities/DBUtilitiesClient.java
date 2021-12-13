@@ -43,7 +43,6 @@ public class DBUtilitiesClient {
 
     /**
      * Updates client's location.
-     *
      * @param con
      * @param email
      * @param location
@@ -59,7 +58,6 @@ public class DBUtilitiesClient {
 
     /**
      * Updates client's DOB.
-     *
      * @param con
      * @param email
      * @param dob

@@ -44,6 +44,13 @@ public class DBUtilitiesTicketing {
         increaseTicketsSoldStmt.executeUpdate();
     }
 
+    /**
+     * Checks if the event is full.
+     * @param con
+     * @param eventId
+     * @return
+     * @throws SQLException
+     */
     public static boolean checkIfEventFull(Connection con, int eventId) throws SQLException {
         String checkSql = "SELECT capacity FROM EventsData WHERE id = ?;";
         PreparedStatement checkStmt = con.prepareStatement(checkSql);

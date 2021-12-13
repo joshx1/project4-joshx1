@@ -18,9 +18,17 @@ import java.sql.SQLException;
 
 /**
  * Landing page that allows a user to request to login with Slack.
+ * Referenced Sami's code at https://github.com/CS601-F21/code-examples.
  */
 public class LandingServlet extends HttpServlet {
 
+    /**
+     * Returns the starting page which allows user to login.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

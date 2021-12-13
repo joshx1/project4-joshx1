@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
-import utilities.ClientInfo;
 import utilities.DBUtilitiesClient;
 
 import java.io.BufferedReader;
@@ -22,8 +21,18 @@ import utilities.DBUtilitiesEvents;
 
 import static utilities.VerifyAuthenticated.checkAuthentication;
 
+/**
+ * Allows the user to create events.
+ */
 public class CreateEventServlet extends HttpServlet {
 
+    /**
+     * The page with the inputs for creating an event.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -66,6 +75,13 @@ public class CreateEventServlet extends HttpServlet {
         return;
     }
 
+    /**
+     * With a request this method creates the event in the database.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

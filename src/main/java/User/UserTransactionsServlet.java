@@ -13,7 +13,6 @@ import utilities.DBUtilitiesEvents;
 import utilities.EventInfo;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

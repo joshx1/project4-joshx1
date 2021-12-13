@@ -1,6 +1,9 @@
 package utilities;
 import java.sql.*;
 
+/**
+ * Class for event info object.
+ */
 public class EventInfo {
     private int id;
     private String creator;
@@ -12,6 +15,18 @@ public class EventInfo {
     private Date date;
     private int capacity;
 
+    /**
+     * Constructor for event info.
+     * @param id
+     * @param creator
+     * @param name
+     * @param location
+     * @param price
+     * @param priceVIP
+     * @param priceStudent
+     * @param date
+     * @param capacity
+     */
     public EventInfo(int id, String creator, String name, String location, float price, float priceVIP, float priceStudent, Date date, int capacity) {
         this.id = id;
         this.creator = creator;
@@ -24,6 +39,10 @@ public class EventInfo {
         this.capacity = capacity;
     }
 
+    /**
+     * A getter and setter for each variable in event info.
+     * @return
+     */
     public int getId() {
         return id;
     }

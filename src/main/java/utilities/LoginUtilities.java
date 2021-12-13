@@ -1,7 +1,6 @@
 package utilities;
 
 import com.google.gson.Gson;
-import ServerFramework.TicketServer;
 import ServerFramework.TicketServerConstants;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -10,7 +9,7 @@ import java.util.Base64;
 import java.util.Map;
 
 /**
- * A utility class with several helper methods.
+ * A utility class with several helper methods. Referenced Sami's code at https://github.com/CS601-F21/code-examples.
  */
 public class LoginUtilities {
 
@@ -156,9 +155,5 @@ public class LoginUtilities {
         // convert the id_token payload to a map
         Map<String, Object> payloadMap = gson.fromJson(new StringReader(payload), Map.class);
         return payloadMap;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(generateSlackAuthorizeURL("abc", "123", "def", "url"));
     }
 }

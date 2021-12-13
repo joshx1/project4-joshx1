@@ -2,6 +2,7 @@ package utilities;
 
 /**
  * A class parse necessary configuration info.
+ * Referenced Sami's code at https://github.com/CS601-F21/code-examples.
  */
 public class Config {
 

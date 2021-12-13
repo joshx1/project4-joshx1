@@ -2,6 +2,7 @@ package utilities;
 
 /**
  * A class to store the properties of the JSON configuration file.
+ * Referenced Sami's code at https://github.com/CS601-F21/code-examples.
  */
 public class ConfigSql {
 

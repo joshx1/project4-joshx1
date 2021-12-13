@@ -10,7 +10,18 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * A helper class to verify if the user has been authenticated.
+ */
 public class VerifyAuthenticated {
+    /**
+     * This method checks if the user is authenticated by sessionid.
+     * @param req
+     * @param resp
+     * @param sessionId
+     * @return
+     * @throws IOException
+     */
     public static boolean checkAuthentication(HttpServletRequest req, HttpServletResponse resp, String sessionId) throws IOException {
         try {
             Connection connection = DBCPDataSource.getConnection();

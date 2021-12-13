@@ -1,5 +1,8 @@
 package Events;
 
+/**
+ * This class contains constants for the DisplayEventInfoServlet.
+ */
 public class DisplayEventInfoConstants {
     public static final String editForms = "  <label for=\"price\">New standard price:</label><br/>\n" +
         "  <input type=\"number\" id=\"price\" name=\"price\" required/><br/>\n" +

@@ -34,6 +34,12 @@ public class DBUtilitiesEvents {
         insertClientLocationStmt.executeUpdate();
     }
 
+    /**
+     * Deletes an event.
+     * @param con
+     * @param eventId
+     * @throws SQLException
+     */
     public static void executeDeleteEvent(Connection con, int eventId) throws SQLException {
         String deleteSql = "DELETE FROM EventsData WHERE id = ?;";
         PreparedStatement deleteStmt = con.prepareStatement(deleteSql);
@@ -72,7 +78,6 @@ public class DBUtilitiesEvents {
 
     /**
      * Get for events by location, partial matches are returned.
-     *
      * @param con
      * @throws SQLException
      */
@@ -88,7 +93,6 @@ public class DBUtilitiesEvents {
 
     /**
      * Get details for a specific event.
-     *
      * @param con
      * @throws SQLException
      */
@@ -114,7 +118,6 @@ public class DBUtilitiesEvents {
 
     /**
      * Returns all events user purchased.
-     *
      * @param con
      * @param email
      * @return
@@ -131,7 +134,6 @@ public class DBUtilitiesEvents {
 
     /**
      * Update event's name.
-     *
      * @param con
      * @param eventId
      * @param name
@@ -147,7 +149,6 @@ public class DBUtilitiesEvents {
 
     /**
      * Updates event's location.
-     *
      * @param con
      * @param eventId
      * @param location
@@ -163,7 +164,6 @@ public class DBUtilitiesEvents {
 
     /**
      * Updates event's date.
-     *
      * @param con
      * @param eventId
      * @param date
@@ -177,6 +177,13 @@ public class DBUtilitiesEvents {
         insertEventDateStmt.executeUpdate();
     }
 
+    /**
+     * Updates standard price.
+     * @param con
+     * @param eventId
+     * @param price
+     * @throws SQLException
+     */
     public static void executeInsertEventStandardPrice(Connection con, int eventId, float price) throws SQLException {
         String insertEventPriceSql = "UPDATE EventsData SET price = ? WHERE id = ?;";
         PreparedStatement insertEventPriceStmt = con.prepareStatement(insertEventPriceSql);
@@ -185,6 +192,13 @@ public class DBUtilitiesEvents {
         insertEventPriceStmt.executeUpdate();
     }
 
+    /**
+     * Updates student price.
+     * @param con
+     * @param eventId
+     * @param price
+     * @throws SQLException
+     */
     public static void executeInsertEventStudentPrice(Connection con, int eventId, float price) throws SQLException {
         String insertEventPriceSql = "UPDATE EventsData SET price_student = ? WHERE id = ?;";
         PreparedStatement insertEventPriceStmt = con.prepareStatement(insertEventPriceSql);
@@ -193,6 +207,13 @@ public class DBUtilitiesEvents {
         insertEventPriceStmt.executeUpdate();
     }
 
+    /**
+     * Updates VIP price.
+     * @param con
+     * @param eventId
+     * @param price
+     * @throws SQLException
+     */
     public static void executeInsertEventVIPPrice(Connection con, int eventId, float price) throws SQLException {
         String insertEventPriceSql = "UPDATE EventsData SET price_VIP = ? WHERE id = ?;";
         PreparedStatement insertEventPriceStmt = con.prepareStatement(insertEventPriceSql);

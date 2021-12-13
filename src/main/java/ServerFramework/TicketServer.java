@@ -23,7 +23,7 @@ import java.io.FileReader;
  */
 
 /**
- * This is the main class of the program and it handles starting up the server as well as setting up the servlets.
+ * This is the main class of the event ticketing program and it handles starting up the server as well as setting up the servlets.
  */
 public class TicketServer {
 

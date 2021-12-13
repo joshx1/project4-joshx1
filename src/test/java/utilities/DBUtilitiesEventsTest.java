@@ -1,13 +1,14 @@
 package utilities;
 
 import ConnectionPool.DBCPDataSource;
+
 import org.junit.jupiter.api.Test;
 
 import java.sql.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DBUtilitiesClientEventsTest {
+class DBUtilitiesEventsTest {
 
     @Test
     void executeInsertEventTest() {

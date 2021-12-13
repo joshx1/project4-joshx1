@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.http.HttpStatus;
-import utilities.ClientInfo;
 import utilities.DBUtilitiesClient;
 import utilities.DBUtilitiesEvents;
 import utilities.EventInfo;

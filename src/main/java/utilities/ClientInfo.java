@@ -14,6 +14,17 @@ public class ClientInfo {
     private String location;
     private Date dob;
 
+    /**
+     * Constructor for object.
+     * @param name
+     * @param access_token
+     * @param token_type
+     * @param id_token
+     * @param email
+     * @param email_verified
+     * @param location
+     * @param dob
+     */
     public ClientInfo(String name, String access_token, String token_type, String id_token, String email, boolean email_verified, String location, Date dob) {
         this.name = name;
         this.access_token = access_token;
@@ -25,6 +36,9 @@ public class ClientInfo {
         this.dob = dob;
     }
 
+    /**
+     * A getter and setter for each variable.
+     */
     public String getName() {
         return name;
     }

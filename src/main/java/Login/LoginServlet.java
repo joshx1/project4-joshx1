@@ -24,9 +24,17 @@ import static utilities.VerifyAuthenticated.checkAuthentication;
 /**
  * Implements logic for the /login path where Slack will redirect requests after
  * the user has entered their auth info.
+ * Referenced Sami's code at https://github.com/CS601-F21/code-examples.
  */
 public class LoginServlet extends HttpServlet {
 
+    /**
+     * This method handles the login flow from Slack.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // retrieve the ID of this session

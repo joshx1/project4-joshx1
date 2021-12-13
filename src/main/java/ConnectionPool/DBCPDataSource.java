@@ -8,11 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.io.FileReader;
 
 /**
  * A connection pool using Apache DBCP ConnectionPool which handles our connections to the MySQL database on Stargate.
  * Taken from https://www.baeldung.com/java-connection-pooling
+ * Referenced Sami's code at https://github.com/CS601-F21/code-examples.
  */
 public class DBCPDataSource {
 

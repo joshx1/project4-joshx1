@@ -19,8 +19,18 @@ import utilities.DBUtilitiesTicketing;
 
 import static utilities.VerifyAuthenticated.checkAuthentication;
 
+/**
+ * This class is a stand in payment processor.
+ */
 public class PaymentServlet extends HttpServlet {
 
+    /**
+     * This returns a page asking the user if they have enough money to afford the event.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String sessionId = req.getSession(true).getId();
 
@@ -60,6 +70,13 @@ public class PaymentServlet extends HttpServlet {
         return;
     }
 
+    /**
+     * This post takes in the request sent by the payment page.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String[] URI = req.getRequestURI().split("/");
