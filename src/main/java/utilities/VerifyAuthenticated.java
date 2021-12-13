@@ -13,7 +13,7 @@ public class VerifyAuthenticated {
     public static boolean checkAuthentication(HttpServletRequest req, HttpServletResponse resp, String sessionId) throws IOException {
         try {
             Connection connection = DBCPDataSource.getConnection();
-            String email = DBUtilities.emailFromSessionId(connection, sessionId);
+            String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             req.getSession().setAttribute(TicketServerConstants.CLIENT_INFO_KEY, null);

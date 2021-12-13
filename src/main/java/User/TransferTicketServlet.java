@@ -1,13 +1,14 @@
 package User;
 
 import ConnectionPool.DBCPDataSource;
+import ServerFramework.TicketServerConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.http.HttpStatus;
-import utilities.DBUtilities;
+import utilities.DBUtilitiesClient;
 import utilities.DBUtilitiesTicketing;
 
 import java.io.IOException;
@@ -45,16 +46,17 @@ public class TransferTicketServlet extends HttpServlet {
         String ticketType = URI[3];
         try {
             Connection connection = DBCPDataSource.getConnection();
-            String emailSender = DBUtilities.emailFromSessionId(connection, sessionId);
+            String emailSender = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
             //ClientInfo clientInfo = DBUtilities.userInfoFromEmail(connection, email);
             DBUtilitiesTicketing.transferTicket(connection, emailSender, emailReceiver, eventId, ticketType);
         } catch (SQLException throwables) {
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
             throwables.printStackTrace();
+            return;
         }
         resp.setStatus(HttpStatus.OK_200);
-        resp.getWriter().println("<h1> Success </h1>");
-        resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
-            "<button name=\"returnhome\" value=" + ">Return to home</button>" +
-            "</form>");
+        resp.getWriter().println(TicketServerConstants.SUCCESS + TicketServerConstants.RETURN_HOME);
+        return;
     }
 }

@@ -1,13 +1,14 @@
 package Events;
 
 import ConnectionPool.DBCPDataSource;
+import ServerFramework.TicketServerConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.http.HttpStatus;
-import utilities.DBUtilities;
+import utilities.DBUtilitiesClient;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -41,7 +42,7 @@ public class PaymentServlet extends HttpServlet {
         String eventId = URI[2];
         try {
             Connection connection = DBCPDataSource.getConnection();
-            String email = DBUtilities.emailFromSessionId(connection, sessionId);
+            String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
             if (!DBUtilitiesTicketing.checkIfEventFull(connection, Integer.parseInt(eventId))) {
                 resp.setStatus(HttpStatus.OK_200);
                 resp.getWriter().println("<h1> Event is sold out. </h1>");
@@ -60,6 +61,7 @@ public class PaymentServlet extends HttpServlet {
         resp.getWriter().println("<form action=\"/login\" method=\"get\">" +
             "<button name=\"type\" value=>No</button>" +
             "</form>");
+        return;
     }
 
     @Override
@@ -76,16 +78,16 @@ public class PaymentServlet extends HttpServlet {
         String sessionId = req.getSession(true).getId();
         try {
             Connection connection = DBCPDataSource.getConnection();
-            String email = DBUtilities.emailFromSessionId(connection, sessionId);
+            String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
             //ClientInfo clientInfo = DBUtilities.userInfoFromEmail(connection, email);
             DBUtilitiesTicketing.buyTicket(connection, email, eventId, ticketType);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            return;
         }
         resp.setStatus(HttpStatus.OK_200);
-        resp.getWriter().println("<h1> Success </h1>");
-        resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
-            "<button name=\"returnhome\" value=" + ">Return to home</button>" +
-            "</form>");
+        resp.getWriter().println(TicketServerConstants.SUCCESS + TicketServerConstants.RETURN_HOME);
+        return;
     }
 }

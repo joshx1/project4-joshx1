@@ -17,6 +17,14 @@ public class TicketServerConstants {
         "</body>\n" +
         "</html>";
 
+    public static final String SUCCESS = "<h1> Update success! </h1>";
+
+    public static final String ERROR = "<h1> Update failed! </h1>";
+
+    public static final String RETURN_HOME = "<form action=\"/login" + "\" method=\"get\">" +
+        "<button name=\"returnhome\" value=" + ">Return to home</button>" +
+        "</form>";
+
     public static final String HOST = "slack.com";
     public static final String AUTH_PATH = "openid/connect/authorize";
     public static final String TOKEN_PATH = "api/openid.connect.token";

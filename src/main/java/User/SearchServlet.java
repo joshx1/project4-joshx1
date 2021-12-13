@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
-import utilities.DBUtilities;
+import utilities.DBUtilitiesClient;
 import org.apache.commons.io.IOUtils;
 import utilities.DBUtilitiesEvents;
 
@@ -37,12 +37,17 @@ public class SearchServlet extends HttpServlet {
         String sessionId = req.getSession(true).getId();
         try {
             Connection connection = DBCPDataSource.getConnection();
-            String email = DBUtilities.emailFromSessionId(connection, sessionId);
-            clientInfo = DBUtilities.userInfoFromEmail(connection, email);
+            String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
+            clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             resp.getWriter().println("<h1> Event Search </h1>");
             resp.getWriter().println("<form action=\"/search\" method=\"post\">\n" +
-                "  <label for=\"query\">Search event name:</label><br/>\n" +
-                "  <input type=\"text\" id=\"query\" name=\"query\"/><br/>\n" +
+                "  <label for=\"queryName\">Search event name:</label><br/>\n" +
+                "  <input type=\"text\" id=\"queryName\" name=\"queryName\"/><br/>\n" +
+                "  <input type=\"submit\" value=\"Submit\"/>\n" +
+                "</form>");
+            resp.getWriter().println("<form action=\"/search\" method=\"post\">\n" +
+                "  <label for=\"queryLocation\">Search event location:</label><br/>\n" +
+                "  <input type=\"text\" id=\"queryLocation\" name=\"queryLocation\"/><br/>\n" +
                 "  <input type=\"submit\" value=\"Submit\"/>\n" +
                 "</form>");
         } catch (SQLException throwables) {
@@ -66,9 +71,15 @@ public class SearchServlet extends HttpServlet {
         String[] queryList = query.split("=");
         System.out.println(Arrays.toString(queryList));
         String queryValue = queryList[1];
+        String searchType = queryList[0];
+        ResultSet results = null;
         try {
             Connection connection = DBCPDataSource.getConnection();
-            ResultSet results = DBUtilitiesEvents.searchEvents(connection, queryValue);
+            if (searchType.equals("queryName")) {
+                results = DBUtilitiesEvents.searchEventsName(connection, queryValue);
+            } else if (searchType.equals("queryLocation")) {
+                results = DBUtilitiesEvents.searchEventsLocation(connection, queryValue);
+            }
             resp.setStatus(HttpStatus.OK_200);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
             resp.getWriter().println("<h1> All events searched for </h1>");
@@ -76,6 +87,7 @@ public class SearchServlet extends HttpServlet {
                 resp.getWriter().println("<h1>Name: " + results.getString("name") + "</h1>");
                 resp.getWriter().println("<p><a href=\"/event/" + results.getInt("id") + "\">" + results.getString("name") + "</a>");
             }
+            resp.getWriter().println(TicketServerConstants.RETURN_HOME);
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException e) {
             e.printStackTrace();

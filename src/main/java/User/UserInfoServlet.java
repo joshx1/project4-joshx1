@@ -2,7 +2,7 @@ package User;
 
 import ConnectionPool.DBCPDataSource;
 import org.apache.commons.io.IOUtils;
-import utilities.DBUtilities;
+import utilities.DBUtilitiesClient;
 import ServerFramework.TicketServerConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -40,8 +40,8 @@ public class UserInfoServlet extends HttpServlet {
         if (checkAuthentication(req, resp, sessionId)) return;
         try {
             Connection connection = DBCPDataSource.getConnection();
-            String email = DBUtilities.emailFromSessionId(connection, sessionId);
-            clientInfo = DBUtilities.userInfoFromEmail(connection, email);
+            String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
+            clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             System.out.println(clientInfo.getName());
             resp.setStatus(HttpStatus.OK_200);
             resp.getWriter().println(TicketServerConstants.PAGE_HEADER);
@@ -68,6 +68,9 @@ public class UserInfoServlet extends HttpServlet {
             resp.getWriter().println(TicketServerConstants.PAGE_FOOTER);
         } catch (SQLException e) {
             e.printStackTrace();
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            return;
         }
     }
 
@@ -81,38 +84,28 @@ public class UserInfoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String sessionId = req.getSession(true).getId();
         if (checkAuthentication(req, resp, sessionId)) return;
-        resp.setStatus(HttpStatus.OK_200);
         String [] URI = req.getRequestURI().split("/");
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
         String[] bodyParts = query.split("=");
         System.out.println(Arrays.toString(bodyParts));
-        if (bodyParts[0].equals("name") && bodyParts.length == 2) {
-            try {
-                Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertClientName(connection, URI[2], bodyParts[1]);
-            } catch (SQLException e) {
-                e.printStackTrace();
+        try {
+            Connection connection = DBCPDataSource.getConnection();
+            if (bodyParts[0].equals("name") && bodyParts.length == 2) {
+                    DBUtilitiesClient.executeInsertClientName(connection, URI[2], bodyParts[1]);
+            } else if (bodyParts[0].equals("location") && bodyParts.length == 2) {
+                DBUtilitiesClient.executeInsertClientLocation(connection, URI[2], bodyParts[1]);
+            } else if (bodyParts[0].equals("DOB") && bodyParts.length == 2) {
+                DBUtilitiesClient.executeInsertClientDOB(connection, URI[2], Date.valueOf(bodyParts[1]));
             }
-        } else if (bodyParts[0].equals("location") && bodyParts.length == 2) {
-            try {
-                Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertClientLocation(connection, URI[2], bodyParts[1]);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else if (bodyParts[0].equals("DOB") && bodyParts.length == 2) {
-            try {
-                Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertClientDOB(connection, URI[2], Date.valueOf(bodyParts[1]));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            return;
         }
-        System.out.println("Databases yes");
-        resp.getWriter().println("<h1> Update success! </h1>");
-        resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
-            "<button name=\"returnhome\" value=" + ">Return to home</button>" +
-            "</form>");
+        resp.setStatus(HttpStatus.OK_200);
+        resp.getWriter().println(TicketServerConstants.SUCCESS + TicketServerConstants.RETURN_HOME);
+        return;
     }
 }

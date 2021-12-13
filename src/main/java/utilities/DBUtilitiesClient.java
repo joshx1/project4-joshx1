@@ -5,7 +5,7 @@ import java.sql.*;
 /**
  * This class handles all the MySQL methods related to client information and creation.
  */
-public class DBUtilities {
+public class DBUtilitiesClient {
 
     /**
      * A method to insert session data and a user's email.

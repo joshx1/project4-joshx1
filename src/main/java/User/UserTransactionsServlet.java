@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
-import utilities.DBUtilities;
+import utilities.DBUtilitiesClient;
 import utilities.DBUtilitiesEvents;
 import utilities.EventInfo;
 
@@ -39,8 +39,8 @@ public class UserTransactionsServlet extends HttpServlet {
         if (checkAuthentication(req, resp, sessionId)) return;
         try {
             Connection connection = DBCPDataSource.getConnection();
-            String email = DBUtilities.emailFromSessionId(connection, sessionId);
-            clientInfo = DBUtilities.userInfoFromEmail(connection, email);
+            String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
+            clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             ResultSet resultSet = DBUtilitiesEvents.eventsPurchased(connection, email);
             System.out.println(clientInfo.getName());
             resp.setStatus(HttpStatus.OK_200);

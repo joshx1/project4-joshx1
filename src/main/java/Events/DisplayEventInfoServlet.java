@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
-import utilities.DBUtilities;
+import utilities.DBUtilitiesClient;
 import utilities.DBUtilitiesEvents;
 import utilities.EventInfo;
 
@@ -44,8 +44,8 @@ public class DisplayEventInfoServlet extends HttpServlet {
         System.out.println(URI[2]);
         try {
             Connection connection = DBCPDataSource.getConnection();
-            String email = DBUtilities.emailFromSessionId(connection, sessionId);
-            clientInfo = DBUtilities.userInfoFromEmail(connection, email);
+            String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
+            clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             EventInfo eventInfo = DBUtilitiesEvents.executeSelectSpecificEvent(connection, eventId);
             System.out.println(eventInfo.getName());
             resp.setStatus(HttpStatus.OK_200);
@@ -123,7 +123,6 @@ public class DisplayEventInfoServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setStatus(HttpStatus.OK_200);
         String [] URI = req.getRequestURI().split("/");
         req.getQueryString();
         String query = IOUtils.toString(req.getInputStream(), "UTF-8");
@@ -131,65 +130,36 @@ public class DisplayEventInfoServlet extends HttpServlet {
         System.out.println(Arrays.toString(bodyParts));
         System.out.println(Arrays.toString(URI));
         int eventId = Integer.parseInt(URI[2]);
-        if (bodyParts[1].equals("delete")) {
-            System.out.println(URI[2]);
-            System.out.println("yes");
-            try {
-                Connection connection = DBCPDataSource.getConnection();
-                DBUtilitiesEvents.executeDeleteEvent(connection, eventId);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else if (bodyParts[0].equals("name") && bodyParts.length == 2) {
-            System.out.println(URI[2]);
-            System.out.println(bodyParts[1]);
-            try {
-                Connection connection = DBCPDataSource.getConnection();
-                DBUtilitiesEvents.executeInsertEventName(connection, eventId, bodyParts[1]);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else if (bodyParts[0].equals("location") && bodyParts.length == 2) {
-            System.out.println(bodyParts[1]);
-            try {
-                Connection connection = DBCPDataSource.getConnection();
-                DBUtilitiesEvents.executeInsertEventLocation(connection, eventId, bodyParts[1]);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else if (bodyParts[0].equals("date") && bodyParts.length == 2) {
-            try {
-                Connection connection = DBCPDataSource.getConnection();
-                DBUtilitiesEvents.executeInsertEventDate(connection, eventId, Date.valueOf(bodyParts[1]));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else if (bodyParts[0].equals("price") && bodyParts.length == 2) {
-            try {
-                Connection connection = DBCPDataSource.getConnection();
-                DBUtilitiesEvents.executeInsertEventStandardPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else if (bodyParts[0].equals("priceStudent") && bodyParts.length == 2) {
-            try {
-                Connection connection = DBCPDataSource.getConnection();
-                DBUtilitiesEvents.executeInsertEventStudentPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else if (bodyParts[0].equals("priceVIP") && bodyParts.length == 2) {
+
         try {
             Connection connection = DBCPDataSource.getConnection();
-            DBUtilitiesEvents.executeInsertEventVIPPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
+            if (bodyParts[1].equals("delete")) {
+                System.out.println(URI[2]);
+                System.out.println("yes");
+                DBUtilitiesEvents.executeDeleteEvent(connection, eventId);
+            } else if (bodyParts[0].equals("name") && bodyParts.length == 2) {
+                System.out.println(URI[2]);
+                System.out.println(bodyParts[1]);
+                DBUtilitiesEvents.executeInsertEventName(connection, eventId, bodyParts[1]);
+            } else if (bodyParts[0].equals("location") && bodyParts.length == 2) {
+                DBUtilitiesEvents.executeInsertEventLocation(connection, eventId, bodyParts[1]);
+            } else if (bodyParts[0].equals("date") && bodyParts.length == 2) {
+                DBUtilitiesEvents.executeInsertEventDate(connection, eventId, Date.valueOf(bodyParts[1]));
+            } else if (bodyParts[0].equals("price") && bodyParts.length == 2) {
+                DBUtilitiesEvents.executeInsertEventStandardPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
+            } else if (bodyParts[0].equals("priceStudent") && bodyParts.length == 2) {
+                DBUtilitiesEvents.executeInsertEventStudentPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
+            } else if (bodyParts[0].equals("priceVIP") && bodyParts.length == 2) {
+                DBUtilitiesEvents.executeInsertEventVIPPrice(connection, eventId, Float.parseFloat(bodyParts[1]));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
+            return;
         }
-    }
-        System.out.println("Databases yes");
-        resp.getWriter().println("<h1> Update success! </h1>");
-        resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
-            "<button name=\"returnhome\" value=" + ">Return to home</button>" +
-            "</form>");
+        resp.setStatus(HttpStatus.OK_200);
+        resp.getWriter().println(TicketServerConstants.SUCCESS + TicketServerConstants.RETURN_HOME);
+        return;
     }
 }

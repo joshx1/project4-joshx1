@@ -8,15 +8,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import utilities.Config;
-import utilities.DBUtilities;
+import utilities.DBUtilitiesClient;
 import utilities.LoginUtilities;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import static utilities.VerifyAuthenticated.checkAuthentication;
 
 /**
  * Landing page that allows a user to request to login with Slack.
@@ -34,7 +32,7 @@ public class LandingServlet extends HttpServlet {
         if (clientInfoObj != null) {
             try {
                 Connection connection = DBCPDataSource.getConnection();
-                String email = DBUtilities.emailFromSessionId(connection, sessionId);
+                String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
                 flag = true;
             } catch (SQLException e) {
                 e.printStackTrace();

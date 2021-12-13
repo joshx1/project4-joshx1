@@ -1,12 +1,14 @@
 package User;
 
 import ConnectionPool.DBCPDataSource;
+import ServerFramework.TicketServerConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.http.HttpStatus;
 import utilities.ClientInfo;
-import utilities.DBUtilities;
+import utilities.DBUtilitiesClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,8 +35,8 @@ public class CreateEventServlet extends HttpServlet {
         if (checkAuthentication(req, resp, sessionId)) return;
         try {
             Connection connection = DBCPDataSource.getConnection();
-            String email = DBUtilities.emailFromSessionId(connection, sessionId);
-            clientInfo = DBUtilities.userInfoFromEmail(connection, email);
+            String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
+            clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             resp.getWriter().println("<h1> Create Event </h1>");
             resp.getWriter().println("<form action=\"/createevent/"+ clientInfo.getEmail() + "\" method=\"post\">\n" +
                 "  <label for=\"name\">Event name:</label><br/>\n" +
@@ -109,11 +111,13 @@ public class CreateEventServlet extends HttpServlet {
             Connection connection = DBCPDataSource.getConnection();
             DBUtilitiesEvents.executeInsertEvent(connection, URI[2], name, location, date, price, priceStudent, priceVIP, capacity);
         } catch (SQLException throwables) {
+            resp.setStatus(HttpStatus.BAD_REQUEST_400);
+            resp.getWriter().println(TicketServerConstants.ERROR + TicketServerConstants.RETURN_HOME);
             throwables.printStackTrace();
+            return;
         }
-        resp.getWriter().println("<h1> Update success! </h1>");
-        resp.getWriter().println("<form action=\"/login" + "\" method=\"get\">" +
-            "<button name=\"returnhome\" value=" + ">Return to home</button>" +
-            "</form>");
+        resp.setStatus(HttpStatus.OK_200);
+        resp.getWriter().println(TicketServerConstants.SUCCESS + TicketServerConstants.RETURN_HOME);
+        return;
     }
 }

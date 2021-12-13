@@ -60,10 +60,26 @@ public class DBUtilitiesEvents {
      * @param con
      * @throws SQLException
      */
-    public static ResultSet searchEvents(Connection con, String query) throws SQLException {
+    public static ResultSet searchEventsName(Connection con, String query) throws SQLException {
         System.out.println("DB");
         System.out.println(query);
         String searchSql = "SELECT * FROM EventsData WHERE name LIKE ?;";
+        PreparedStatement searchStmt = con.prepareStatement(searchSql);
+        searchStmt.setString(1, '%' + query + '%');
+        ResultSet results = searchStmt.executeQuery();
+        return results;
+    }
+
+    /**
+     * Get for events by location, partial matches are returned.
+     *
+     * @param con
+     * @throws SQLException
+     */
+    public static ResultSet searchEventsLocation(Connection con, String query) throws SQLException {
+        System.out.println("DB");
+        System.out.println(query);
+        String searchSql = "SELECT * FROM EventsData WHERE location LIKE ?;";
         PreparedStatement searchStmt = con.prepareStatement(searchSql);
         searchStmt.setString(1, '%' + query + '%');
         ResultSet results = searchStmt.executeQuery();

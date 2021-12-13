@@ -13,7 +13,7 @@ import utilities.LoginUtilities;
 import java.sql.Connection;
 import java.sql.SQLException;
 import ConnectionPool.DBCPDataSource;
-import utilities.DBUtilities;
+import utilities.DBUtilitiesClient;
 
 import java.io.IOException;
 import java.util.Map;
@@ -42,8 +42,8 @@ public class LoginServlet extends HttpServlet {
             //Connection connection = null;
             try {
                 Connection connection = DBCPDataSource.getConnection();
-                String email = DBUtilities.emailFromSessionId(connection, sessionId);
-                clientInfo = DBUtilities.userInfoFromEmail(connection, email);
+                String email = DBUtilitiesClient.emailFromSessionId(connection, sessionId);
+                clientInfo = DBUtilitiesClient.userInfoFromEmail(connection, email);
             } catch (SQLException e) {
                 e.printStackTrace();
                 req.getSession().setAttribute(TicketServerConstants.CLIENT_INFO_KEY, null);
@@ -79,9 +79,9 @@ public class LoginServlet extends HttpServlet {
 
             try {
                 Connection connection = DBCPDataSource.getConnection();
-                DBUtilities.executeInsertSessionData(connection, sessionId, clientInfo.getEmail());
-                if (!(DBUtilities.checkClientExists(connection, clientInfo.getEmail()) == 1)) {
-                    DBUtilities.executeInsertClientData(connection, clientInfo.getName(), clientInfo.getAccess_token(), clientInfo.getToken_type(), clientInfo.getId_token(), clientInfo.getEmail(), clientInfo.isEmail_verified());
+                DBUtilitiesClient.executeInsertSessionData(connection, sessionId, clientInfo.getEmail());
+                if (!(DBUtilitiesClient.checkClientExists(connection, clientInfo.getEmail()) == 1)) {
+                    DBUtilitiesClient.executeInsertClientData(connection, clientInfo.getName(), clientInfo.getAccess_token(), clientInfo.getToken_type(), clientInfo.getId_token(), clientInfo.getEmail(), clientInfo.isEmail_verified());
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
